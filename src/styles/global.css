@@ -1,0 +1,1083 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+.web3modal-modal-lightbox {
+  z-index: 9999999999999999999999 !important;
+}
+
+a:not([class]) {
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
+}
+
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-animation-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    -webkit-animation-iteration-count: 1 !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html {
+  block-size: 100%;
+  scroll-behavior: smooth;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeSpeed;
+}
+
+body {
+  --transition: 0.2s ease-in-out;
+  --transition-long: 0.75s ease-in-out;
+  --transition-longer: 1.25s ease-in-out;
+  --gold: #a9803a;
+  background: black;
+  font-family: essay-text, serif;
+  font-weight: 400;
+  font-style: normal;
+  text-shadow: 0 2px 2px black;
+  font-size: clamp(16px, 4vw, 18px);
+  line-height: 1;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#Prepare {
+  background: url(/public/assets/images/Background_8K.webp) no-repeat center right/cover;
+  position: fixed;
+  z-index: 99;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: gap var(--transition-longer);
+  gap: 0;
+}
+
+#Gate {
+  position: fixed;
+  z-index: 99;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: gap var(--transition-longer);
+  gap: 0;
+}
+#Gate__Left,
+#Gate__Right {
+  height: 100vh;
+  flex: 1 1 50%;
+  position: relative;
+  z-index: 1;
+  transition: filter var(--transition-long);
+}
+#Gate__Left::after,
+#Gate__Right::after {
+  content: '';
+  width: max(88px, 6vw);
+  aspect-ratio: 1.75/1;
+  position: absolute;
+  top: 44%;
+  background: #f2690d;
+  filter: blur(8px);
+  border-radius: 100%;
+  opacity: 0;
+  mix-blend-mode: hard-light;
+  transition: all var(--transition);
+  pointer-events: none;
+}
+#Gate__Left {
+  background: url(/public/assets/images/Gates_left.webp) no-repeat center right/cover;
+  box-shadow: 16px 0 20px rgba(0, 0, 0, 0.25);
+}
+
+#Gate__Left::after {
+  right: 0;
+}
+
+#Gate__Right {
+  background: url(/public/assets/images/Gates_right.webp) no-repeat center left/cover;
+  box-shadow: 16px 0 20px rgba(0, 0, 0, 0.25);
+}
+
+#Gate__Right::after {
+  left: 0;
+}
+#Gate__Button {
+  transform: translateZ(2px);
+  position: absolute;
+  font-size: 20px;
+  left: 50%;
+  bottom: 10%;
+  transform: translate(-50%, -50%);
+}
+#Gate.hovered #Gate__Left::after,
+#Gate.hovered #Gate__Right::after {
+  opacity: 1;
+  filter: blur(24px);
+}
+#Gate.entered {
+  gap: 100vw;
+}
+#Gate.entered #Gate__Button {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#World {
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--transition-long);
+}
+#World__Fog {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+#World__Fog .fog {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  transition: transform var(--transition-long), opacity var(--transition-longer);
+}
+#World__Fog .fog img {
+  width: 100vw;
+  height: 100vh;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+#World__Fog__Layer-1 {
+  transform: scale(-1);
+}
+#World__Map {
+  width: 100vw;
+  height: 100vh;
+  background: url(/public/assets/images/backk.webp) no-repeat center center/cover;
+}
+
+#World__Map::after {
+  content: '';
+  background: #160807;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  mix-blend-mode: overlay;
+  transition: opacity var(--transition);
+}
+#World__Map.iso::after {
+  opacity: 0.25;
+}
+#World__Map__Labels {
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+#World__Map__Labels .btn {
+  position: absolute;
+}
+#World__Map .map-region {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  z-index: 1;
+  transition: opacity var(--transition);
+}
+#World__Map .map-region img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+#World__Map .map-region.active {
+  opacity: 1;
+}
+#World.discovered {
+  opacity: 1;
+  transform: scale(1);
+}
+#World.discovered #World__Map__Labels {
+  opacity: 1;
+}
+
+#Town-Label {
+  left: 8vw;
+  top: 12%;
+}
+
+#Cavern-Label {
+  right: 6vw;
+  top: 32%;
+}
+
+#Mountain-Label {
+  right: 16vw;
+  top: 4%;
+}
+
+#Temple-Label {
+  left: 48vw;
+  top: 28%;
+}
+
+#Forest-Label {
+  left: 24vw;
+  top: 20%;
+}
+
+#Alchemist-Label {
+  left: 34vw;
+  bottom: 16%;
+}
+
+#Blacksmith-Label {
+  left: 18vw;
+  top: 40%;
+}
+
+#Jeweler-Label {
+  left: 2vw;
+  top: 54%;
+}
+
+#Menus {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset: 8px;
+  z-index: 12;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.menu {
+  pointer-events: initial;
+  position: absolute;
+  transition: all var(--transition-long);
+  transition-delay: 0.25s;
+  filter: drop-shadow(0 4px 12px black);
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+.menu.menu-active {
+  pointer-events: initial;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.quest-menu {
+  width: min(560px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.quest-menu .menu-header {
+  background: transparent url(/public/assets/images/beta/i/kote-quest-menu-header.png) no-repeat center center/100% 100%;
+  aspect-ratio: 3/1;
+  padding: 40px 0 24px;
+  position: relative;
+}
+@media (max-width: 560px) {
+  .quest-menu .menu-header {
+    padding: 32px 0 16px;
+    gap: 8px;
+  }
+}
+@media (max-width: 360px) {
+  .quest-menu .menu-header {
+    gap: 4px;
+  }
+}
+.quest-menu .menu-header .btn {
+  padding: 12px 24px 14px;
+}
+.quest-menu .menu-header .menu-label {
+  font-size: 20px;
+  padding-inline: 72px;
+}
+@media (max-width: 360px) {
+  .quest-menu .menu-header .menu-label {
+    font-size: 16px;
+  }
+}
+.quest-menu .menu-main {
+  background: transparent url(/public/assets/images/beta/i/kote-quest-menu-main.png) no-repeat center center/100% 100%;
+  height: 100%;
+}
+
+#Inventory {
+  --header-height: 88px;
+  width: min(240px, 100%);
+  border-radius: 4px;
+  overflow: hidden;
+  position: fixed;
+  margin: 8px;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  z-index: 9;
+  pointer-events: initial;
+  transform: translateY(100%);
+  transition: all var(--transition);
+}
+@media (max-width: 360px) {
+  #Inventory {
+    right: auto;
+  }
+}
+#Inventory.ready {
+  opacity: 1;
+  transform: translateY(calc(100% - 80px));
+}
+#Inventory:hover {
+  transform: translateY(calc(100% - 84px));
+}
+#Inventory.active {
+  transform: translateY(0) !important;
+}
+#Inventory__Header {
+  background: url(/public/assets/images/beta/i/kote-inventory-header.png) no-repeat center center/100% 100%;
+  width: 100%;
+  height: var(--header-height);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 8px 8px;
+  cursor: pointer;
+}
+#Inventory__Header .menu-label {
+  width: 100%;
+}
+#Inventory__Main {
+  --gap: 4px;
+  gap: var(--gap);
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+  background: url(/public/assets/images/beta/i/kote-inventory-body.png) no-repeat center center/100% 100%;
+}
+#Inventory__Main .item {
+  flex: 1 1 calc(50% - var(--gap));
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px black);
+  transition: all var(--transition);
+}
+#Inventory__Main .item * {
+  transition: inherit;
+}
+#Inventory__Main .item .menu-icon {
+  filter: drop-shadow(0 0 16px black);
+}
+#Inventory__Main .item-header {
+  background: url(/public/assets/images/beta/i/kote-square-btn-label.png) no-repeat center center/100% 100%;
+  text-align: center;
+  padding: 10px 0 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  pointer-events: none;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 2;
+}
+#Inventory__Main .item-main {
+  background: url(/public/assets/images/beta/i/kote-square-btn.png) no-repeat center center/104% 104%;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+#Inventory__Main .item-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #e8f6fc;
+  opacity: 0.25;
+  z-index: -1;
+  mix-blend-mode: overlay;
+  transition: inherit;
+}
+#Inventory__Main .item:hover .item-main,
+#Inventory__Main .item:active .item-main {
+  padding: 16px;
+}
+#Inventory__Main .item:hover .item-main::after,
+#Inventory__Main .item:active .item-main::after {
+  opacity: 1;
+  background: #99ddff;
+}
+#Inventory__Main .item.active .item-main {
+  padding: 16px;
+}
+#Inventory__Main .item.active .item-main::after {
+  opacity: 1;
+  background: #4dc4ff !important;
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.menu-main {
+  padding: 10px 38px 24px;
+  max-height: 450px;
+}
+@media (max-width: 560px) {
+  .menu-main {
+    padding-inline: calc(6vw + 4px);
+  }
+}
+@media (max-width: 360px) {
+  .menu-main {
+    padding-inline: 24px;
+  }
+}
+.menu-main .content {
+  width: 100%;
+  height: 100%;
+  transform: translateX(-1px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-label {
+  background: url(/public/assets/images/beta/i/kote-menu-label.png) no-repeat center center/100% 100%;
+  text-align: center;
+  color: white;
+  pointer-events: none;
+  font-size: 18px;
+  padding: 10px 48px 14px;
+  filter: drop-shadow(0 2px 4px black);
+}
+
+.menu-list {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 8px;
+}
+.menu-list .token {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: stretch;
+  transition: all var(--transition);
+}
+@media (max-width: 560px) {
+  .menu-list .token {
+    margin: 4px 1px;
+  }
+}
+@media (max-width: 360px) {
+  .menu-list .token {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+  }
+}
+.menu-list .token.selected .quest {
+  background: url(/public/assets/images/beta/i/kote-gate-label.png) no-repeat center center/100% 100%;
+}
+.menu-list .token:hover,
+.menu-list .token.selected {
+  border-color: var(--gold);
+}
+.menu-list .token:hover .token-image::before,
+.menu-list .token.selected .token-image::before {
+  opacity: 0;
+}
+.menu-list .token:hover .token-image::after,
+.menu-list .token.selected .token-image::after {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px black);
+}
+
+.token-stats {
+  color: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+}
+@media (max-width: 360px) {
+  .token-stats {
+    padding: 12px 4px 4px 4px;
+  }
+}
+.token-stats .btn {
+  flex: 1;
+  padding-inline: 24px;
+  font-size: 15px;
+  margin-top: 16px;
+  width: 100%;
+}
+@media (max-width: 560px) {
+  .token-stats .btn {
+    margin-top: 12px;
+  }
+}
+.token-stats ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+@media (max-width: 560px) {
+  .token-stats ul {
+    gap: 8px;
+  }
+}
+.token-stats ul .stat {
+  font-size: clamp(14px, 3vw, 18px);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 calc(50% - 8px);
+  min-width: 88px;
+}
+@media (max-width: 560px) {
+  .token-stats ul .stat {
+    font-size: 16px;
+  }
+}
+.token-stats ul .stat .stat-icon {
+  width: 12px;
+  aspect-ratio: 1;
+}
+.token-stats ul .stat .stat-icon img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+
+.token-image {
+  position: relative;
+  width: clamp(120px, 32vw, 144px);
+  aspect-ratio: 1;
+  border-radius: 12px;
+  padding: 24px 4px 4px 4px;
+}
+.token-image .menu-label {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  padding: 8px 24px 10px;
+  z-index: 8;
+  transform: scale(1.05);
+}
+.token-image img {
+  margin-top: 14px;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+.token-image::before,
+.token-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 0 4px black);
+  transition: all var(--transition);
+}
+.token-image::before {
+  background: red;
+  background: transparent url(/public/assets/images/beta/i/kote-frame-square.png) no-repeat center center/100% 100%;
+}
+.token-image::after {
+  background: blue;
+  background: transparent url(/public/assets/images/beta/i/kote-frame-square-ornate.png) no-repeat center center/100% 100%;
+  opacity: 0;
+}
+
+.scrolling-list {
+  overflow: scroll;
+  max-height: 100%;
+}
+
+.menu-description {
+  color: white;
+  text-align: center;
+  font-size: clamp(14px, 4vw, 18px);
+  line-height: 1.5;
+  padding-inline: 24px;
+  width: min(480px, 100%);
+}
+@media (max-width: 360px) {
+  .menu-description {
+    padding-inline: 16px;
+  }
+}
+
+.menu-description-clear {
+  color: grey;
+  text-align: center;
+  font-size: clamp(8px, 3vw, 14px);
+  line-height: 1;
+  padding-inline: 24px;
+  width: min(480px, 100%);
+  cursor: pointer;
+}
+@media (max-width: 360px) {
+  .menu-description-clear {
+    padding-inline: 16px;
+  }
+}
+
+.menu-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: stretch;
+  margin-top: auto;
+  padding: 8px 4px;
+  width: 100%;
+  box-shadow: 0 -16px 16px black;
+  z-index: 12;
+}
+.menu-controls .btn {
+  flex: 1;
+  padding-inline: 28px;
+  font-size: 15px;
+}
+
+.centered {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  top: 30%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+.centered_btn {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  top: 60%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+
+.centered_music {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  top: 95%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+
+.centered_tutorial {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  top: 70%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+
+.centered_alert {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  border: 20px;
+  top: 10%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+
+.centered_alert-knights {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  border: 20px;
+  top: 20%;
+  left: 50%;
+  z-index: 10000000000000000000;
+}
+
+.centered_loading {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-right: -50%;
+  top: 40%;
+  left: 50%;
+  z-index: 10000000000000000000000;
+}
+
+.Connect__Button {
+  background: url(/public/assets/images/ConnectButton.png) no-repeat center center/100% 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 18px 56px 20px;
+  z-index: 9;
+  filter: grayscale(0.25) drop-shadow(0 2px 4px black);
+  transition: all var(--transition);
+}
+.Connect__Button:active {
+  transform: scale(0.99);
+}
+.Connect__Button:hover {
+  filter: grayscale(0) drop-shadow(0 1px 2px black);
+  color: white;
+  text-shadow: 0 0 16px var(--gold);
+}
+
+.btn {
+  background: url(/public/assets/images/beta/i/kote-gate-label.png) no-repeat center center/100% 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  cursor: pointer;
+  position: relative;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 18px 56px 20px;
+  z-index: 9;
+  filter: grayscale(0.25) drop-shadow(0 2px 4px black);
+  transition: all var(--transition);
+}
+.btn:active {
+  transform: scale(0.99);
+}
+.btn:hover {
+  filter: grayscale(0) drop-shadow(0 1px 2px black);
+  color: white;
+  text-shadow: 0 0 16px var(--gold);
+}
+.btn.deactivated {
+  filter: grayscale(1);
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.5);
+}
+.btn.quest {
+  background: url(/public/assets/images/beta/i/kote-gate-label-alt.png) no-repeat center center/100% 100%;
+}
+
+#Menus .no-menus .menu {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+#World.no-fog #World__Fog .fog {
+  opacity: 0;
+}
+#World.no-fog #World__Fog__Layer-1 {
+  transition-delay: 0.25s;
+  transform: translateY(-5%) scale(-1.125);
+}
+#World.no-fog #World__Fog__Layer-2 {
+  transition-delay: 0.5s;
+  transform: translateY(5%) scale(1.125);
+}
+
+.close-menu {
+  position: absolute;
+  top: 32px;
+  right: 24px;
+  width: 24px;
+  aspect-ratio: 1;
+  cursor: pointer;
+  background: url(/public/assets/images/beta/i/kote-button-close.png) no-repeat center center/100% 100%;
+  transition: all var(--transition);
+  filter: grayscale(0.5) drop-shadow(0 2px 16px black);
+}
+.close-menu:hover {
+  filter: grayscale(0) drop-shadow(0 2px 4px black);
+}
+
+.Audio-Toggle-Name {
+  position: absolute;
+  bottom: 1px;
+  left: 8px;
+  z-index: 9;
+  color: white;
+  font-size: 10px;
+}
+
+#Audio-Toggle {
+  position: absolute;
+  bottom: 16px;
+  left: 8px;
+  width: 48px;
+  aspect-ratio: 1;
+  z-index: 9;
+  padding: 10px;
+  background: url(/public/assets/images/beta/i/kote-square-btn.png) no-repeat center center/104% 104%;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+#Audio-Toggle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #e8f6fc;
+  opacity: 0.25;
+  z-index: -1;
+  mix-blend-mode: overlay;
+  transition: inherit;
+}
+#Audio-Toggle:hover {
+  background-size: 100% 100%;
+}
+#Audio-Toggle:hover::after {
+  opacity: 1;
+  background: #e8f6fc;
+}
+#Audio-Toggle.off {
+  padding: 12px;
+  background-size: 100% 100%;
+}
+#Audio-Toggle.off::after {
+  opacity: 1;
+  background: #f2690d;
+}
+#Audio-Toggle.off img {
+  opacity: 0.5;
+}
+#Audio-Toggle.off:hover img {
+  opacity: 1;
+}
+.menu-header-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.quest-menu .menu-header-about {
+  background: transparent url(/public/assets/images/pop_up_window_B.png) no-repeat center center/100% 100%;
+  aspect-ratio: 3/1;
+  padding: 40px 0 24px;
+  position: relative;
+}
+
+@media (max-width: 560px) {
+  .quest-menu .menu-header-about {
+    padding: 32px 0 16px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .quest-menu .menu-header-about {
+    gap: 4px;
+  }
+}
+
+.quest-menu .menu-header-about .btn {
+  padding: 12px 24px 14px;
+}
+
+.quest-menu .menu-heade-aboutr .menu-label {
+  font-size: 20px;
+  padding-inline: 72px;
+}
+
+@media (max-width: 360px) {
+  .quest-menu .menu-header-about .menu-label {
+    font-size: 16px;
+  }
+}
+.loader-logo {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: 40%;
+}
+
+.loader {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: 40%;
+  border-radius: 90%;
+  background: linear-gradient(45deg, transparent 40%, skyblue);
+  animation: move 0.8s linear infinite;
+}
+
+.loader::before {
+  position: absolute;
+  content: '';
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  background: #000;
+  border-radius: 90%;
+}
+
+.loader::after {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 90%;
+  background: linear-gradient(45deg, transparent 40%, skyblue);
+  filter: blur(20px);
+}
+
+@keyframes move {
+  to {
+    transform: rotate(360deg);
+    filter: hue-rotate(360deg);
+  }
+}
+#Cavern-Label-About {
+  right: 6vw;
+  top: 31%;
+}
+
+#Mountain-Label-About {
+  right: 16vw;
+  top: 3%;
+}
+
+#Temple-Label-About {
+  left: 48vw;
+  top: 27%;
+}
+
+#Forest-Label-About {
+  left: 24vw;
+  top: 19%;
+}
+
+.btn-about.quest-about {
+  background: url(/public/assets/images/Button_tiny_info.png) no-repeat center center/100% 100%;
+}
+
+.btn-about {
+  height: 33px;
+  position: absolute;
+  aspect-ratio: 1;
+  cursor: pointer;
+  z-index: 9;
+  filter: grayscale(0.25) drop-shadow(0 2px 4px black);
+  transition: all var(--transition);
+}
+
+.btn-about:active {
+  transform: scale(0.99);
+}
+
+.btn-about:hover {
+  filter: grayscale(0) drop-shadow(0 1px 2px black);
+  color: white;
+  text-shadow: 0 0 16px var(--gold);
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation-name: pulse;
+  animation-duration: 1s;
+}
+
+.animated {
+  animation-duration: 2.5s;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+}

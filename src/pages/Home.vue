@@ -1,0 +1,190 @@
+<script setup>
+import { onMounted, reactive, computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import Loader from '@/components/Loader.vue'
+import Gate from '@/views/home/Gate.vue'
+import World from '@/views/home/World.vue'
+import Menus from '@/views/home/Menus.vue'
+import ApproveMenus from '@/views/home/ApproveMenus.vue'
+import InventoryMenu from '@/views/home/InventoryMenu.vue'
+import DepositMenu from '@/views/home/DepositMenu.vue'
+import SquiresMenus from '@/views/home/SquiresMenus.vue'
+import AboutMenus from '@/views/home/AboutMenus.vue'
+import InventoryItemMenus from '@/views/home/InventoryItemMenus.vue'
+
+const store = useStore()
+const router = useRouter()
+
+const state = reactive({
+  loading: true,
+  mouseHovered: false,
+  gateOpen: true,
+  enteredGate: false,
+  gateBtnShow: true,
+  gateShow: true,
+  showFog: true,
+  showMenus: false,
+  mapRegionActive: '',
+  inventoryMenuReady: false,
+  squiresMenuActiveStatus: '',
+  aboutMenuActiveStatus: '',
+  inventoryItemMenuActiveStatus: '',
+})
+
+const homePageLoading = computed(() => store.state.homePageLoading)
+const isHoverClass = computed(() => (!state.gateOpen && state.mouseHovered ? true : false))
+const isWrongNetwork = computed(() => (store.state.web3.chainId !== 42161 ? true : false))
+const isGateOpen = computed(() => (state.gateOpen ? true : false))
+const disconnectedWallet = computed(() => (store.state.web3.active ? false : true))
+const changedAccount = computed(() => store.state.web3.account)
+
+watch(isWrongNetwork, newStatus => {
+  if (newStatus === true) state.gateOpen = false
+  else state.gateOpen = true
+})
+
+watch(isGateOpen, newStatus => {
+  if (newStatus === false) {
+    state.showFog = true
+    state.showMenus = false
+    state.enteredGate = false
+    state.inventoryMenuReady = false
+    state.squiresMenuActiveStatus = ''
+    state.aboutMenuActiveStatus = ''
+    state.inventoryItemMenuActiveStatus = ''
+    setTimeout(() => {
+      state.gateBtnShow = true
+    }, 500)
+    setTimeout(() => {
+      state.gateShow = true
+    }, 500)
+  }
+})
+
+watch(disconnectedWallet, newStatus => {
+  if (newStatus === true) {
+    store.commit('user/setLoggedIn', false)
+    router.push('/')
+  }
+})
+
+watch(changedAccount, (newAccount, oldAccount) => {
+  if (newAccount !== oldAccount) {
+    store.commit('user/setLoggedIn', false)
+    router.push('/')
+  }
+})
+
+const handleHoverGateBtn = flag => {
+  state.mouseHovered = flag
+}
+
+const handleClickGateBtn = () => {
+  if (state.gateOpen) {
+    state.enteredGate = true
+    state.showFog = false
+    state.showMenus = false
+    setTimeout(() => (state.gateBtnShow = false), 500)
+    setTimeout(() => {
+      state.gateShow = false
+      state.inventoryMenuReady = true
+    }, 2000)
+  }
+}
+
+const handleHoverMapRegion = region => {
+  state.mapRegionActive = region
+}
+
+const handleClickLabel = status => {
+  showMenu()
+  handleSquiresMenuActiveStatus(status)
+}
+
+const handleSquiresMenuActiveStatus = status => {
+  state.squiresMenuActiveStatus = status
+}
+
+const handleClickAbout = status => {
+  showMenu()
+  state.aboutMenuActiveStatus = status
+}
+
+const handleClickInventoryItem = status => {
+  showMenu()
+  state.inventoryItemMenuActiveStatus = status
+}
+
+const showMenu = () => {
+  state.showFog = true
+  state.showMenus = true
+}
+
+const handleClickCloseMenu = () => {
+  state.showFog = false
+  state.showMenus = false
+  state.squiresMenuActiveStatus = ''
+  state.aboutMenuActiveStatus = ''
+  state.inventoryItemMenuActiveStatus = ''
+}
+
+onMounted(async () => {
+  if (store.state.web3.active === false) router.push('/')
+  await store.commit('setHomePageLoading', true)
+  await store.dispatch('socket/getSquires')
+  await store.dispatch('socket/getInventoryItems')
+  // await store.dispatch('user/checkApproveForest')
+  // await store.dispatch('user/checkApproveCavern')
+  // await store.dispatch('user/checkApproveMountain')
+  // await store.dispatch('user/checkApproveTemple')
+  // await store.dispatch('user/checkWorship')
+  // await store.dispatch('user/getFiefTotal')
+  // await store.dispatch('user/getSquireTotal')
+  // await store.dispatch('user/getPotionTotal')
+  // await store.dispatch('user/getRingTotal')
+  // await store.dispatch('user/getTrinketTotal')
+})
+</script>
+
+<template>
+  <loader v-if="homePageLoading" />
+  <template v-if="!homePageLoading">
+    <gate
+      :is-hover-class="isHoverClass"
+      :is-wrong-network="isWrongNetwork"
+      :gate-open="state.gateOpen"
+      :gate-show="state.gateShow"
+      :gate-btn-show="state.gateBtnShow"
+      :entered-gate="state.enteredGate"
+      @handle-hover-gate-btn="handleHoverGateBtn"
+      @handle-click-gate-btn="handleClickGateBtn"
+    />
+    <menus :show-menus="state.showMenus">
+      <inventory-menu :inventory-menu-ready="state.inventoryMenuReady" @handle-click-inventory-item="handleClickInventoryItem" />
+      <inventory-item-menus
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+      />
+      <!-- <approve-menus /> -->
+      <deposit-menu
+        :squires-menu-active-status="state.squiresMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+      />
+      <squires-menus
+        :squires-menu-active-status="state.squiresMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+      />
+      <about-menus :about-menu-active-status="state.aboutMenuActiveStatus" @handle-click-close-menu="handleClickCloseMenu" />
+    </menus>
+    <world
+      :show-fog="state.showFog"
+      :map-region-active="state.mapRegionActive"
+      @handle-hover-map-region="handleHoverMapRegion"
+      @handle-click-label="handleClickLabel"
+      @handle-click-about="handleClickAbout"
+    />
+  </template>
+</template>
