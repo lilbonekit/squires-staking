@@ -11,8 +11,10 @@ const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active
 
 const state = reactive({
   currentMenuActiveStatus: '',
+  selectedSquires: [],
 })
 const menuActiveStatus = computed(() => props.squiresMenuActiveStatus)
+const showDepositBtn = computed(() => (state.selectedSquires.length > 0 ? true : false))
 
 watch(menuActiveStatus, (newStatus, oldStatus) => {
   if (newStatus === 'deposit') {
@@ -22,13 +24,43 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
     }, 750)
   }
 })
+
+const isSelected = id => (state.selectedSquires.filter(squire => squire === id).length > 0 ? true : false)
+
+const handleClickClose = () => {
+  setTimeout(() => {
+    state.selectedSquires = []
+  }, 750)
+  emit('handle-click-close-menu')
+}
+
+const handleCheckDeposited = () => {
+  setTimeout(() => {
+    state.selectedSquires = []
+  }, 750)
+  emit('handle-squires-menu-active-status', state.currentMenuActiveStatus)
+}
+
+const handleClickRefresh = async () => {
+  state.selectedSquires = []
+  await store.dispatch('squires/squiresNonDeposit')
+}
+
+const handleSelectSquire = id => {
+  if (isSelected(id)) state.selectedSquires = state.selectedSquires.filter(squire => squire !== id)
+  else state.selectedSquires.push(id)
+}
+
+const handleSelectDepositFew = () => {}
+
+const handleSelectDepositAll = () => {}
 </script>
 
 <template>
   <!-- deposit -->
   <div class="menu quest-menu" :class="{ 'menu-active': squiresMenuActiveStatus === 'deposit' }">
     <header class="menu-header">
-      <button class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
+      <button class="close-menu" @click="() => handleClickClose()"></button>
       <div class="menu-label">Deposit Squires</div>
       <p class="menu-description">
         <template v-if="store.state.squires.loading">
@@ -39,19 +71,17 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
           />
         </template>
         <template v-if="!store.state.squires.loading">
-          {{
-            store.state.squires.data.length === 0 ? 'All squires are currently questing!' : 'Select the squires you would like to send off questing'
-          }}
+          {{ store.state.squires.data.length === 0 ? 'All squires are currently deposited!' : 'Select the squires you would like to deposit' }}
         </template>
       </p>
-      <button class="btn" @click="() => emit('handle-squires-menu-active-status', state.currentMenuActiveStatus)">Check Squires Deposited</button>
-      <button class="btn" @click="() => store.dispatch('squires/squiresNonDeposit')">Refresh</button>
+      <button class="btn" @click="() => handleCheckDeposited()">Check Squires Deposited</button>
+      <button class="btn" @click="() => handleClickRefresh()">Refresh</button>
     </header>
     <main class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
           <div v-for="squire in store.state.squires.data">
-            <div class="item token">
+            <div class="item token" :class="{ selected: isSelected(squire.id) }">
               <div class="token-image">
                 <div class="menu-label">{{ squire.typename || 'Strength' }}</div>
                 <img src="/assets/images/strength.png" alt="no img" />
@@ -59,34 +89,36 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="assets/images/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength || 3 }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="assets/images/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck || 1 }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="assets/images/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom || 2 }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="assets/images/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith || 1 }}</span>
                   </li>
                 </ul>
-                <button class="btn quest" onclick="pushQuestingF(this)">
-                  Select <span class="token-number">#{{ squire.id }}</span>
+                <button class="btn quest" @click="() => handleSelectSquire(squire.id)">
+                  {{ isSelected(squire.id) ? 'Deselect' : 'Select' }} <span class="token-number">#{{ squire.id }}</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
         <footer class="menu-controls">
-          <button class="btn" style="display: none" onclick="sign.questForestFew()">
-            <span class="num-selected"><span id="questorsF"></span></span>
+          <button class="btn" v-if="showDepositBtn" @click="handleSelectDepositFew">
+            <span class="num-selected"
+              ><span id="questorsF">Deposit Squire(s) # {{ state.selectedSquires.toString() }}</span></span
+            >
           </button>
-          <button class="btn" onclick="sign.questForestAll()">Deposit All</button>
+          <button class="btn" @click="handleSelectDepositAll">Deposit All</button>
         </footer>
       </div>
     </main>

@@ -36,8 +36,8 @@ watch(menuActiveStatus, newStatus => {
 })
 
 const getTimestamp = async () => {
-  const blockn = await store.state.web3.library.getBlockNumber()
-  const block = await store.state.web3.library.getBlock(blockn)
+  const blockn = await store.state.web3.library.eth.getBlockNumber()
+  const block = await store.state.web3.library.eth.getBlock(blockn)
   return block.timestamp
 }
 </script>
@@ -83,19 +83,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -161,19 +161,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -242,19 +242,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -320,19 +320,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -402,19 +402,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -480,19 +480,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -572,19 +572,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
@@ -650,19 +650,19 @@ const getTimestamp = async () => {
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>

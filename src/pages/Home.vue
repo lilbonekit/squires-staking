@@ -131,24 +131,21 @@ const handleClickCloseMenu = () => {
 
 onMounted(async () => {
   if (store.state.web3.active === false) router.push('/')
-  await store.commit('setHomePageLoading', true)
-  await store.dispatch('socket/getSquires')
-  await store.dispatch('socket/getInventoryItems')
-  // await store.dispatch('user/checkApproveForest')
-  // await store.dispatch('user/checkApproveCavern')
-  // await store.dispatch('user/checkApproveMountain')
-  // await store.dispatch('user/checkApproveTemple')
-  // await store.dispatch('user/checkWorship')
-  // await store.dispatch('user/getFiefTotal')
-  // await store.dispatch('user/getSquireTotal')
-  // await store.dispatch('user/getPotionTotal')
-  // await store.dispatch('user/getRingTotal')
-  // await store.dispatch('user/getTrinketTotal')
+  store.commit('setHomePageLoading', true)
+  try {
+    await store.dispatch('socket/getSquires')
+    await store.dispatch('socket/getInventoryItems')
+  } catch (error) {
+    store.commit('setHomePageLoading', false)
+    console.log(error)
+  }
 })
 </script>
 
 <template>
-  <loader v-if="homePageLoading" />
+  <template v-if="homePageLoading">
+    <loader />
+  </template>
   <template v-if="!homePageLoading">
     <gate
       :is-hover-class="isHoverClass"
