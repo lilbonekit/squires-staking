@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const graphND = async account => {
+export const getSquiresToDepositBySubgraph = async account => {
   const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-owner-tracker`, {
     query: `
   {

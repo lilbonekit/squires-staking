@@ -1,8 +1,6 @@
-const userModule = {
+const itemsModule = {
   namespaced: true,
   state: {
-    balance: 0,
-    loggedIn: false,
     fiefTotal: 0,
     squires: [],
     squireTotal: 0,
@@ -17,12 +15,6 @@ const userModule = {
   },
   getters: {},
   mutations: {
-    setBalance(state, payload) {
-      state.balance = payload
-    },
-    setLoggedIn(state, status) {
-      state.loggedIn = status
-    },
     setFiefTotal(state, payload) {
       state.fiefTotal = payload
     },
@@ -45,12 +37,6 @@ const userModule = {
       state.trinketTotal = payload.trinketTotal
     },
   },
-  actions: {
-    async getBalance({ rootState, commit }) {
-      const balance = await rootState.web3.library.eth.getBalance(rootState.web3.account)
-      commit('setBalance', balance)
-      console.log('setBalance', balance)
-    },
-  },
+  actions: {},
 }
-export default userModule
+export default itemsModule

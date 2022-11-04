@@ -1,8 +1,6 @@
 <script setup>
 import { computed, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
-import { fief } from '@/config/constants/contracts'
-import getContract from '@/utils/getContract'
 
 const store = useStore()
 
@@ -23,9 +21,6 @@ const state = reactive({
   showFiefButton: true,
 })
 
-const btnQuestName = computed(squire =>
-  squire.questing ? `questing ${String(squire.questtype).charAt(0).toUpperCase() + String(squire.questtype).slice(1)}` : `is in town`,
-)
 const menuActiveStatus = computed(() => props.inventoryItemMenuActiveStatus)
 
 watch(menuActiveStatus, newStatus => {
@@ -34,6 +29,10 @@ watch(menuActiveStatus, newStatus => {
     state.fiefSendAmount = 0
   }
 })
+
+const btnQuestName = squire => {
+  return squire.quest !== 'None' ? `questing ${String(squire.quest).charAt(0).toUpperCase() + String(squire.quest).slice(1)}` : `is in town`
+}
 
 const updateFiefAmountText = text => {
   state.fiefAmountText = text
@@ -56,7 +55,7 @@ const updateFiefAddressText = text => {
 const handleClickSendFief = async () => {
   if (state.fiefSendAmount <= 0) {
     updateFiefAmountText('Enter more than 0 $FIEF')
-  } else if (state.fiefSendAmount > store.state.user.fiefTotal) {
+  } else if (state.fiefSendAmount > store.state.items.fiefTotal) {
     updateFiefAmountText('You entered more $FIEF than is in your inventory.')
   } else if (state.fiefSendAddress.length !== 42) {
     updateFiefAddressText('Invalid Address, Please Enter a valid 42 character address.')
@@ -64,21 +63,6 @@ const handleClickSendFief = async () => {
     state.fiefAddressTextReadOnly = true
     state.fiefAmountTextReadOnly = true
     state.showFiefButton = false
-    const fiefContract = getContract(store.state.web3.library, fief.abi, fief.address)
-    const setTokens = BigInt(state.fiefSendAmount)
-    const setMultiplier = BigInt('1000000000000000000')
-    const sendAmount = setTokens * setMultiplier
-
-    try {
-      await fiefContract.methods.transfer(state.fiefSendAddress, sendAmount).send({ from: store.state.web3.account })
-      await store.dispatch('user/getFiefTotal')
-    } catch (error) {
-      console.log(error)
-    } finally {
-      state.fiefAddressTextReadOnly = false
-      state.fiefAmountTextReadOnly = false
-      state.showFiefButton = true
-    }
   }
 }
 </script>
@@ -88,46 +72,46 @@ const handleClickSendFief = async () => {
     <header class="menu-header">
       <button id="Close-Inventory-Squires" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <div class="menu-label">
-        Squires: <span id="squires-total-inventory">{{ store.state.user.squireTotal }}</span>
+        Squires: <span id="squires-total-inventory">{{ store.state.items.squireTotal }}</span>
       </div>
       <button id="refresh-squire-inventory" class="btn" @click="() => store.dispatch('socket/getSquires')">Refresh</button>
       <p class="menu-description">
-        Squires Questing: <span id="squires-total-questing">{{ store.state.user.squireTotalQuesting }}</span>
+        Squires Questing: <span id="squires-total-questing">{{ store.state.items.squireTotalQuesting }}</span>
       </p>
       <p class="menu-description">
-        Squires in Town: <span id="squires-total-town">{{ store.state.user.squireTotalTown }}</span>
+        Squires in Town: <span id="squires-total-town">{{ store.state.items.squireTotalTown }}</span>
       </p>
     </header>
     <main id="Squire-Console" class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div id="squiresInventory" v-for="(squire, index) in store.state.user.squires" :key="index">
+          <div id="squiresInventory" v-for="(squire, index) in store.state.items.squires" :key="index">
             <div class="item token" id="squireSelectedQuesting">
               <div class="token-image">
-                <div class="menu-label">{{ squire.typename }}</div>
+                <div class="menu-label">{{ squire.type }}</div>
                 <img :src="squire.image" />
               </div>
               <div class="token-stats">
                 <ul>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-axe.png" /></i>Strength:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
                     <span class="stat-value">{{ squire.strength }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-jewel.png" /></i>Luck:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
                     <span class="stat-value">{{ squire.luck }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-sparkle.png" /></i>Wisdom:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
                     <span class="stat-value">{{ squire.wisdom }}</span>
                   </li>
                   <li class="stat">
-                    <i class="stat-icon"><img src="https://knightsoftheether.com/beta/i/kote-icon-staff.png" /></i>Faith:
+                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
                     <span class="stat-value">{{ squire.faith }}</span>
                   </li>
                 </ul>
                 <button class="btn quest">
-                  <span class="token-number">{{ `#${squire.id} ${btnQuestName(squire)}` }}</span>
+                  <span class="token-number">{{ `#${squire.tokenId} ${btnQuestName(squire)}` }}</span>
                 </button>
               </div>
             </div>
@@ -141,7 +125,7 @@ const handleClickSendFief = async () => {
     <header class="menu-header">
       <button id="Close-Inventory-Fief" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <div class="menu-label">
-        $FIEF: <span id="fief-total-inventory">{{ store.state.user.fiefTotal }}</span>
+        $FIEF: <span id="fief-total-inventory">{{ store.state.items.fiefTotal }}</span>
       </div>
       <p id="fief-input-amount-text" class="menu-description" :style="{ color: state.fiefAmountTextColor, transition: 'all 2s ease-out' }">
         {{ state.fiefAmountText }}
@@ -170,7 +154,7 @@ const handleClickSendFief = async () => {
   <div id="Inventory-Potion" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'potion' }">
     <header class="menu-header">
       <div class="menu-label">
-        Potions: <span id="potionTotal-inventory">{{ store.state.user.potionTotal }}</span>
+        Potions: <span id="potionTotal-inventory">{{ store.state.items.potionTotal }}</span>
       </div>
       <button id="Close-Inventory-Potion" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
     </header>
@@ -185,7 +169,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p1">{{ store.state.user.potions[0] }}</span>
+                  Amount: <span class="stat-value" id="p1">{{ store.state.items.potions[0] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Luck Potion</button>
@@ -199,7 +183,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p2">{{ store.state.user.potions[1] }}</span>
+                  Amount: <span class="stat-value" id="p2">{{ store.state.items.potions[1] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Levitation Potion</button>
@@ -213,7 +197,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p3">{{ store.state.user.potions[2] }}</span>
+                  Amount: <span class="stat-value" id="p3">{{ store.state.items.potions[2] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Strong Brew</button>
@@ -227,7 +211,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p4">{{ store.state.user.potions[3] }}</span>
+                  Amount: <span class="stat-value" id="p4">{{ store.state.items.potions[3] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Pava Root Potion</button>
@@ -241,7 +225,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p5">{{ store.state.user.potions[4] }}</span>
+                  Amount: <span class="stat-value" id="p5">{{ store.state.items.potions[4] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Spring Water Flask</button>
@@ -255,7 +239,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p6">{{ store.state.user.potions[5] }}</span>
+                  Amount: <span class="stat-value" id="p6">{{ store.state.items.potions[5] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Mirroring Potion</button>
@@ -269,7 +253,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p7">{{ store.state.user.potions[6] }}</span>
+                  Amount: <span class="stat-value" id="p7">{{ store.state.items.potions[6] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Phial of Defense</button>
@@ -283,7 +267,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p8">{{ store.state.user.potions[7] }}</span>
+                  Amount: <span class="stat-value" id="p8">{{ store.state.items.potions[7] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Slime Vial</button>
@@ -297,7 +281,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p9">{{ store.state.user.potions[8] }}</span>
+                  Amount: <span class="stat-value" id="p9">{{ store.state.items.potions[8] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Ichor Draft</button>
@@ -311,7 +295,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p10">{{ store.state.user.potions[9] }}</span>
+                  Amount: <span class="stat-value" id="p10">{{ store.state.items.potions[9] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Holy Water</button>
@@ -325,7 +309,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p11">{{ store.state.user.potions[10] }}</span>
+                  Amount: <span class="stat-value" id="p11">{{ store.state.items.potions[10] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Murky Flask</button>
@@ -339,7 +323,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p12">{{ store.state.user.potions[11] }}</span>
+                  Amount: <span class="stat-value" id="p12">{{ store.state.items.potions[11] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Arcane Brew</button>
@@ -353,7 +337,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p13">{{ store.state.user.potions[12] }}</span>
+                  Amount: <span class="stat-value" id="p13">{{ store.state.items.potions[12] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Berserkers Brew</button>
@@ -367,7 +351,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p14">{{ store.state.user.potions[13] }}</span>
+                  Amount: <span class="stat-value" id="p14">{{ store.state.items.potions[13] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Spirit Vial</button>
@@ -381,7 +365,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p15">{{ store.state.user.potions[14] }}</span>
+                  Amount: <span class="stat-value" id="p15">{{ store.state.items.potions[14] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Flask of Resolve</button>
@@ -395,7 +379,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p16">{{ store.state.user.potions[15] }}</span>
+                  Amount: <span class="stat-value" id="p16">{{ store.state.items.potions[15] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Lucidity Elixir</button>
@@ -409,7 +393,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p17">{{ store.state.user.potions[16] }}</span>
+                  Amount: <span class="stat-value" id="p17">{{ store.state.items.potions[16] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Philter of Redemption</button>
@@ -423,7 +407,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p18">{{ store.state.user.potions[17] }}</span>
+                  Amount: <span class="stat-value" id="p18">{{ store.state.items.potions[17] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Lavender Extract</button>
@@ -437,7 +421,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p19">{{ store.state.user.potions[18] }}</span>
+                  Amount: <span class="stat-value" id="p19">{{ store.state.items.potions[18] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Trippie Draught</button>
@@ -451,7 +435,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p20">{{ store.state.user.potions[19] }}</span>
+                  Amount: <span class="stat-value" id="p20">{{ store.state.items.potions[19] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Phantom Phial</button>
@@ -465,7 +449,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p21">{{ store.state.user.potions[20] }}</span>
+                  Amount: <span class="stat-value" id="p21">{{ store.state.items.potions[20] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Bloodlust Flask</button>
@@ -479,7 +463,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p22">{{ store.state.user.potions[21] }}</span>
+                  Amount: <span class="stat-value" id="p22">{{ store.state.items.potions[21] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Misty Phial</button>
@@ -493,7 +477,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p23">{{ store.state.user.potions[22] }}</span>
+                  Amount: <span class="stat-value" id="p23">{{ store.state.items.potions[22] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Spirit Elixir</button>
@@ -507,7 +491,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p24">{{ store.state.user.potions[23] }}</span>
+                  Amount: <span class="stat-value" id="p24">{{ store.state.items.potions[23] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Dew Drop Vial</button>
@@ -521,7 +505,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="p25">{{ store.state.user.potions[24] }}</span>
+                  Amount: <span class="stat-value" id="p25">{{ store.state.items.potions[24] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Master Brew</button>
@@ -535,7 +519,7 @@ const handleClickSendFief = async () => {
   <div id="Inventory-Ring" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'ring' }">
     <header class="menu-header">
       <div class="menu-label">
-        Rings: <span id="ringTotal-inventory">{{ store.state.user.ringTotal }}</span>
+        Rings: <span id="ringTotal-inventory">{{ store.state.items.ringTotal }}</span>
       </div>
       <button id="Close-Inventory-Ring" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
     </header>
@@ -550,7 +534,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r1">{{ store.state.user.rings[0] }}</span>
+                  Amount: <span class="stat-value" id="r1">{{ store.state.items.rings[0] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Burn Defense</button>
@@ -564,7 +548,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r2">{{ store.state.user.rings[1] }}</span>
+                  Amount: <span class="stat-value" id="r2">{{ store.state.items.rings[1] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Avoidance</button>
@@ -578,7 +562,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r3">{{ store.state.user.rings[2] }}</span>
+                  Amount: <span class="stat-value" id="r3">{{ store.state.items.rings[2] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Steel Ring of Fiendsbane</button>
@@ -592,7 +576,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r4">{{ store.state.user.rings[3] }}</span>
+                  Amount: <span class="stat-value" id="r4">{{ store.state.items.rings[3] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Titanium Ring of Fey Resistance</button>
@@ -606,7 +590,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r5">{{ store.state.user.rings[4] }}</span>
+                  Amount: <span class="stat-value" id="r5">{{ store.state.items.rings[4] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Energy</button>
@@ -620,7 +604,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r6">{{ store.state.user.rings[5] }}</span>
+                  Amount: <span class="stat-value" id="r6">{{ store.state.items.rings[5] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Titanium Ring of the Forest</button>
@@ -634,7 +618,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r7">{{ store.state.user.rings[6] }}</span>
+                  Amount: <span class="stat-value" id="r7">{{ store.state.items.rings[6] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Silver Ring of Restoration</button>
@@ -648,7 +632,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r8">{{ store.state.user.rings[7] }}</span>
+                  Amount: <span class="stat-value" id="r8">{{ store.state.items.rings[7] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Bronze Ring of alchemy</button>
@@ -662,7 +646,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r9">{{ store.state.user.rings[8] }}</span>
+                  Amount: <span class="stat-value" id="r9">{{ store.state.items.rings[8] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Platinum Ring of Confusion</button>
@@ -676,7 +660,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r10">{{ store.state.user.rings[9] }}</span>
+                  Amount: <span class="stat-value" id="r10">{{ store.state.items.rings[9] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Rose Gold Ring of Reaction</button>
@@ -690,7 +674,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r11">{{ store.state.user.rings[10] }}</span>
+                  Amount: <span class="stat-value" id="r11">{{ store.state.items.rings[10] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Diamond Ring of Spikes</button>
@@ -704,7 +688,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r12">{{ store.state.user.rings[11] }}</span>
+                  Amount: <span class="stat-value" id="r12">{{ store.state.items.rings[11] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Brass Ring of Advantage</button>
@@ -718,7 +702,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r13">{{ store.state.user.rings[12] }}</span>
+                  Amount: <span class="stat-value" id="r13">{{ store.state.items.rings[12] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Kyanite Ring of Courage</button>
@@ -732,7 +716,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r14">{{ store.state.user.rings[13] }}</span>
+                  Amount: <span class="stat-value" id="r14">{{ store.state.items.rings[13] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Ingenuity</button>
@@ -746,7 +730,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r15">{{ store.state.user.rings[14] }}</span>
+                  Amount: <span class="stat-value" id="r15">{{ store.state.items.rings[14] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Silver Ring of the Deep Sleep</button>
@@ -760,7 +744,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r16">{{ store.state.user.rings[15] }}</span>
+                  Amount: <span class="stat-value" id="r16">{{ store.state.items.rings[15] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Combustion</button>
@@ -774,7 +758,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r17">{{ store.state.user.rings[16] }}</span>
+                  Amount: <span class="stat-value" id="r17">{{ store.state.items.rings[16] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Silver Ring of Duplication</button>
@@ -788,7 +772,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r18">{{ store.state.user.rings[17] }}</span>
+                  Amount: <span class="stat-value" id="r18">{{ store.state.items.rings[17] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Brass Ring of Quick Reflexes</button>
@@ -802,7 +786,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r19">{{ store.state.user.rings[18] }}</span>
+                  Amount: <span class="stat-value" id="r19">{{ store.state.items.rings[18] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Marble Ring of Retention</button>
@@ -816,7 +800,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r20">{{ store.state.user.rings[19] }}</span>
+                  Amount: <span class="stat-value" id="r20">{{ store.state.items.rings[19] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Pearl Ring of Spirit</button>
@@ -830,7 +814,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r21">{{ store.state.user.rings[20] }}</span>
+                  Amount: <span class="stat-value" id="r21">{{ store.state.items.rings[20] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Stone Ring of Increase</button>
@@ -844,7 +828,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r22">{{ store.state.user.rings[21] }}</span>
+                  Amount: <span class="stat-value" id="r22">{{ store.state.items.rings[21] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Steel Ring of Protection</button>
@@ -858,7 +842,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r23">{{ store.state.user.rings[22] }}</span>
+                  Amount: <span class="stat-value" id="r23">{{ store.state.items.rings[22] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gold Ring of Determination</button>
@@ -872,7 +856,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r24">{{ store.state.user.rings[23] }}</span>
+                  Amount: <span class="stat-value" id="r24">{{ store.state.items.rings[23] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Amber Ring of Withstanding</button>
@@ -886,7 +870,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="r25">{{ store.state.user.rings[24] }}</span>
+                  Amount: <span class="stat-value" id="r25">{{ store.state.items.rings[24] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Etheric Ring of Renewal</button>
@@ -900,7 +884,7 @@ const handleClickSendFief = async () => {
   <div id="Inventory-Trinket" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'trinket' }">
     <header class="menu-header">
       <div class="menu-label">
-        Trinkets: <span id="trinketTotal-inventory">{{ store.state.user.trinketTotal }}</span>
+        Trinkets: <span id="trinketTotal-inventory">{{ store.state.items.trinketTotal }}</span>
       </div>
       <button id="Close-Inventory-Trinket" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
     </header>
@@ -915,7 +899,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t1">{{ store.state.user.trinkets[0] }}</span>
+                  Amount: <span class="stat-value" id="t1">{{ store.state.items.trinkets[0] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Wee Red Mushroom</button>
@@ -929,7 +913,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t2">{{ store.state.user.trinkets[1] }}</span>
+                  Amount: <span class="stat-value" id="t2">{{ store.state.items.trinkets[1] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Pine Resin</button>
@@ -943,7 +927,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t3">{{ store.state.user.trinkets[2] }}</span>
+                  Amount: <span class="stat-value" id="t3">{{ store.state.items.trinkets[2] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Birdcage</button>
@@ -957,7 +941,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t4">{{ store.state.user.trinkets[3] }}</span>
+                  Amount: <span class="stat-value" id="t4">{{ store.state.items.trinkets[3] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Glowing Rune</button>
@@ -971,7 +955,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t5">{{ store.state.user.trinkets[4] }}</span>
+                  Amount: <span class="stat-value" id="t5">{{ store.state.items.trinkets[4] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Ether Crystal</button>
@@ -985,7 +969,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t6">{{ store.state.user.trinkets[5] }}</span>
+                  Amount: <span class="stat-value" id="t6">{{ store.state.items.trinkets[5] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Rabbit Foot</button>
@@ -999,7 +983,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t7">{{ store.state.user.trinkets[6] }}</span>
+                  Amount: <span class="stat-value" id="t7">{{ store.state.items.trinkets[6] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Poisonous Frog</button>
@@ -1013,7 +997,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t8">{{ store.state.user.trinkets[7] }}</span>
+                  Amount: <span class="stat-value" id="t8">{{ store.state.items.trinkets[7] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Acorns</button>
@@ -1027,7 +1011,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t9">{{ store.state.user.trinkets[8] }}</span>
+                  Amount: <span class="stat-value" id="t9">{{ store.state.items.trinkets[8] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Torch</button>
@@ -1041,7 +1025,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t10">{{ store.state.user.trinkets[9] }}</span>
+                  Amount: <span class="stat-value" id="t10">{{ store.state.items.trinkets[9] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Dream Amulet</button>
@@ -1055,7 +1039,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t11">{{ store.state.user.trinkets[10] }}</span>
+                  Amount: <span class="stat-value" id="t11">{{ store.state.items.trinkets[10] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Dusty Scroll</button>
@@ -1069,7 +1053,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t12">{{ store.state.user.trinkets[11] }}</span>
+                  Amount: <span class="stat-value" id="t12">{{ store.state.items.trinkets[11] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Crustacean Claw</button>
@@ -1083,7 +1067,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t13">{{ store.state.user.trinkets[12] }}</span>
+                  Amount: <span class="stat-value" id="t13">{{ store.state.items.trinkets[12] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Goblet</button>
@@ -1097,7 +1081,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t14">{{ store.state.user.trinkets[13] }}</span>
+                  Amount: <span class="stat-value" id="t14">{{ store.state.items.trinkets[13] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Draca Fangs</button>
@@ -1111,7 +1095,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t15">{{ store.state.user.trinkets[14] }}</span>
+                  Amount: <span class="stat-value" id="t15">{{ store.state.items.trinkets[14] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Gargoyle</button>
@@ -1125,7 +1109,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t16">{{ store.state.user.trinkets[15] }}</span>
+                  Amount: <span class="stat-value" id="t16">{{ store.state.items.trinkets[15] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Bat Wing</button>
@@ -1139,7 +1123,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t17">{{ store.state.user.trinkets[16] }}</span>
+                  Amount: <span class="stat-value" id="t17">{{ store.state.items.trinkets[16] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Runic Tome</button>
@@ -1153,7 +1137,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t18">{{ store.state.user.trinkets[17] }}</span>
+                  Amount: <span class="stat-value" id="t18">{{ store.state.items.trinkets[17] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Lucky Die</button>
@@ -1167,7 +1151,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t19">{{ store.state.user.trinkets[18] }}</span>
+                  Amount: <span class="stat-value" id="t19">{{ store.state.items.trinkets[18] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Golem Eye</button>
@@ -1181,7 +1165,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t20">{{ store.state.user.trinkets[19] }}</span>
+                  Amount: <span class="stat-value" id="t20">{{ store.state.items.trinkets[19] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Phoenix Egg</button>
@@ -1195,7 +1179,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t21">{{ store.state.user.trinkets[20] }}</span>
+                  Amount: <span class="stat-value" id="t21">{{ store.state.items.trinkets[20] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Abyssal Talisman</button>
@@ -1209,7 +1193,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t22">{{ store.state.user.trinkets[21] }}</span>
+                  Amount: <span class="stat-value" id="t22">{{ store.state.items.trinkets[21] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Enchanted Goggles</button>
@@ -1223,7 +1207,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t23">{{ store.state.user.trinkets[22] }}</span>
+                  Amount: <span class="stat-value" id="t23">{{ store.state.items.trinkets[22] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Magic Coinpurse</button>
@@ -1237,7 +1221,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t24">{{ store.state.user.trinkets[23] }}</span>
+                  Amount: <span class="stat-value" id="t24">{{ store.state.items.trinkets[23] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Hand Candle</button>
@@ -1251,7 +1235,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t25">{{ store.state.user.trinkets[24] }}</span>
+                  Amount: <span class="stat-value" id="t25">{{ store.state.items.trinkets[24] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Mask of Valathor</button>
@@ -1265,7 +1249,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t26">{{ store.state.user.trinkets[25] }}</span>
+                  Amount: <span class="stat-value" id="t26">{{ store.state.items.trinkets[25] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">Wild Cucumber</button>
@@ -1279,7 +1263,7 @@ const handleClickSendFief = async () => {
             <div class="token-stats">
               <ul>
                 <li class="stat">
-                  Amount: <span class="stat-value" id="t27">{{ store.state.user.trinkets[26] }}</span>
+                  Amount: <span class="stat-value" id="t27">{{ store.state.items.trinkets[26] }}</span>
                 </li>
               </ul>
               <button class="btn quest" id="squires">UnderDark Egg</button>

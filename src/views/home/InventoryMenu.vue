@@ -27,7 +27,7 @@ const handleClickInventoryHeader = () => {
     <main id="Inventory__Main" class="menu-main">
       <button id="Inventory-Squires-Trigger" class="item inventory-item" @click="() => emit('handle-click-inventory-item', 'squires')">
         <header class="item-header">
-          <span id="squireTotal">{{ store.state.user.squireTotal }}</span> Squires
+          <span id="squireTotal">{{ store.state.items.squireTotal }}</span> Squires
         </header>
         <main class="item-main">
           <img class="menu-icon" src="/assets/images/beta/i/kote-icon-book.png" />
@@ -35,7 +35,7 @@ const handleClickInventoryHeader = () => {
       </button>
       <button id="Inventory-Fief-Trigger" class="item inventory-item" @click="() => emit('handle-click-inventory-item', 'fief')">
         <header class="item-header">
-          <span id="fiefTotal">{{ store.state.user.fiefTotal }}</span> $FIEF
+          <span id="fiefTotal">{{ store.state.items.fiefTotal }}</span> $FIEF
         </header>
         <main class="item-main">
           <img class="menu-icon" src="/assets/images/beta/i/kote-icon-inventory.png" />
@@ -43,7 +43,7 @@ const handleClickInventoryHeader = () => {
       </button>
       <button id="Inventory-Potion-Trigger" class="item inventory-item" @click="() => emit('handle-click-inventory-item', 'potion')">
         <header class="item-header">
-          <span id="potionTotal">{{ store.state.user.potionTotal }}</span> Potions
+          <span id="potionTotal">{{ store.state.items.potionTotal }}</span> Potions
         </header>
         <main class="item-main">
           <img class="menu-icon" src="/assets/images/beta/i/kote-icon-alchemy.png" />
@@ -51,7 +51,7 @@ const handleClickInventoryHeader = () => {
       </button>
       <button id="Inventory-Ring-Trigger" class="item inventory-item" @click="() => emit('handle-click-inventory-item', 'ring')">
         <header class="item-header">
-          <span id="ringTotal">{{ store.state.user.ringTotal }}</span> Rings
+          <span id="ringTotal">{{ store.state.items.ringTotal }}</span> Rings
         </header>
         <main class="item-main">
           <img class="menu-icon" src="/assets/images/beta/i/kote-icon-jewelry.png" />
@@ -59,7 +59,7 @@ const handleClickInventoryHeader = () => {
       </button>
       <button id="Inventory-Trinket-Trigger" class="item inventory-item" @click="() => emit('handle-click-inventory-item', 'trinket')">
         <header class="item-header">
-          <span id="trinketTotal">{{ store.state.user.trinketTotal }}</span> Trinkets
+          <span id="trinketTotal">{{ store.state.items.trinketTotal }}</span> Trinkets
         </header>
         <main class="item-main">
           <img class="menu-icon" src="/assets/images/beta/i/kote-icon-runes.png" />

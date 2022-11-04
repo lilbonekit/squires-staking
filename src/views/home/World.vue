@@ -71,14 +71,10 @@ const emit = defineEmits(['handle-hover-map-region', 'handle-click-label', 'hand
         <button
           id="Temple-Label"
           class="btn"
-          :class="{ quest: store.state.user.approveWorship }"
+          :class="{ quest: false }"
           @mouseenter="() => emit('handle-hover-map-region', 'temple')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="
-            () => {
-              if (store.state.user.approveTemple) emit('handle-click-label', 'temple/send')
-            }
-          "
+          @click="() => {}"
         >
           Temple
         </button>

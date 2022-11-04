@@ -47,16 +47,16 @@ export const getSquireTotal = squires => {
   let squireTotalQuesting = 0
   let squireTotalTown = 0
   squires.forEach(squire => {
-    if (squire.questing) squireTotalQuesting += 1
+    if (squire.quest !== 'None') squireTotalQuesting += 1
     else squireTotalTown += 1
   })
   return { squires: squires, squireTotal, squireTotalQuesting, squireTotalTown }
 }
 
 export const getInventoryItemsTotal = (items, rootState) => {
-  let potions = rootState.user.potions
-  let rings = rootState.user.rings
-  let trinkets = rootState.user.trinkets
+  let potions = rootState.items.potions
+  let rings = rootState.items.rings
+  let trinkets = rootState.items.trinkets
   let potionTotal = 0
   let ringTotal = 0
   let trinketTotal = 0

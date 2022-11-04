@@ -527,11 +527,9 @@ const getTimestamp = async () => {
     <header class="menu-header">
       <button id="Close-Temple-Send" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <div class="menu-label">Temple</div>
-      <p class="menu-description" id="Temple-Closed" v-if="!store.state.user.approveWorship">
-        Temple is closed until the next day of worship.<br /><br />You can return your Squires Only
-      </p>
+      <p class="menu-description" id="Temple-Closed">Temple is closed until the next day of worship.<br /><br />You can return your Squires Only</p>
       <!--<p class="menu-description" id="Temple-Description-Send">Temple Questing will Begin Shortly</p>-->
-      <p class="menu-description" id="Temple-Description-Send" v-if="store.state.user.approveWorship">
+      <p class="menu-description" id="Temple-Description-Send">
         <template v-if="store.state.squires.loading">
           Loading Squires<br /><img
             class="menu-description"
@@ -548,19 +546,12 @@ const getTimestamp = async () => {
       <button id="Temple-return" class="btn" @click="() => emit('handle-squires-menu-active-status', 'temple/return')">
         Check Squires Ready to Return
       </button>
-      <button
-        id="refresh-return-temple"
-        class="btn"
-        @click="() => store.dispatch('squires/squiresNoQuesting')"
-        v-if="store.state.user.approveWorship"
-      >
-        Refresh
-      </button>
+      <button id="refresh-return-temple" class="btn" @click="() => store.dispatch('squires/squiresNoQuesting')">Refresh</button>
       <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
         Deposit
       </button>
     </header>
-    <main id="Temple-Console-Send" class="menu-main" v-if="store.state.user.approveWorship">
+    <main id="Temple-Console-Send" class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
           <div id="squiresWaitingTemple" v-for="squire in store.state.squires.data">
@@ -685,7 +676,7 @@ const getTimestamp = async () => {
           </button>
           <button class="btn" id="Temple-Return-All" onclick="sign.leaveTempleAll()">Return All</button>
         </footer>
-        <footer class="menu-controls" id="restart-temple-closed" v-if="store.state.user.approveWorship">
+        <footer class="menu-controls" id="restart-temple-closed">
           <button class="btn" id="Temple-Return-All-Restart" onclick="sign.leaveTempleAllRestart()">Return All and Restart Quest</button>
         </footer>
       </div>

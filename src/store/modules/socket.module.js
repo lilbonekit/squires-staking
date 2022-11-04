@@ -9,12 +9,6 @@ const socketModule = {
     setSocketInstance(state, payload) {
       state.socketInstance = payload
     },
-    setFief(state, fief) {
-      state.fief = fief
-    },
-    setSquires(state, squires) {
-      state.squires = squires
-    },
   },
   actions: {
     async initializeSocketInstance({ commit, rootState }) {
@@ -30,15 +24,15 @@ const socketModule = {
           f = Number(f).toFixed(2)
           f = parseFloat(f)
 
-          commit('user/setFiefTotal', f, { root: true })
-          commit('user/setLoggedIn', true, { root: true })
+          commit('items/setFiefTotal', f, { root: true })
+          commit('web3/setLoggedIn', true, { root: true })
         })
 
         socketInstance.on('squires', response => {
           if (response.success) {
             const squires = response.squires
             const squireTotal = socketService.getSquireTotal(squires)
-            commit('user/setSquireTotal', squireTotal, { root: true })
+            commit('items/setSquireTotal', squireTotal, { root: true })
             console.log('setSquireTotal', squireTotal)
           } else {
             throw new Error(response.message)
@@ -51,7 +45,7 @@ const socketModule = {
             return squire
           })
           const squireTotal = socketService.getSquireTotal(squires)
-          commit('user/setSquireTotal', squireTotal, { root: true })
+          commit('items/setSquireTotal', squireTotal, { root: true })
           console.log('setSquireTotal', squireTotal)
         })
 
@@ -60,7 +54,7 @@ const socketModule = {
           f = Number(f).toFixed(2)
           f = parseFloat(f)
 
-          commit('user/setFiefTotal', f, { root: true })
+          commit('items/setFiefTotal', f, { root: true })
           console.log('setFiefTotal', f)
         })
 
@@ -72,9 +66,9 @@ const socketModule = {
           if (response) {
             const items = response.items
             const inventoryItems = socketService.getInventoryItemsTotal(items, rootState)
-            commit('user/setPotionTotal', inventoryItems[0], { root: true })
-            commit('user/setRingTotal', inventoryItems[1], { root: true })
-            commit('user/setTrinketTotal', inventoryItems[2], { root: true })
+            commit('items/setPotionTotal', inventoryItems[0], { root: true })
+            commit('items/setRingTotal', inventoryItems[1], { root: true })
+            commit('items/setTrinketTotal', inventoryItems[2], { root: true })
             console.log('inventoryItems:', inventoryItems)
             commit('setHomePageLoading', false, { root: true })
           }

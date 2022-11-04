@@ -11,6 +11,8 @@ const web3Module = {
     active: false,
     account: null,
     chainId: 0,
+    balance: 0,
+    loggedIn: false,
   },
   mutations: {
     setWeb3Modal(state, payload) {
@@ -28,6 +30,12 @@ const web3Module = {
     setChainId(state, payload) {
       state.chainId = payload
     },
+    setBalance(state, payload) {
+      state.balance = payload
+    },
+    setLoggedIn(state, status) {
+      state.loggedIn = status
+    },
   },
   actions: {
     async connect({ state, commit, dispatch }) {
@@ -43,18 +51,18 @@ const web3Module = {
         }
 
         const chainId = await library.eth.getChainId()
-        commit('setChainId', chainId)
+        commit('setChainId', parseInt(chainId))
 
-        if (parseInt(chainId) !== 42161) {
-          try {
-            await library.currentProvider.request({
-              method: 'wallet_addEthereumChain',
-              params: [networkParams[parseInt(42161)]],
-            })
-          } catch (error) {
-            throw new Error(error)
-          }
-        }
+        // if (parseInt(chainId) !== 42161) {
+        //   try {
+        //     await library.currentProvider.request({
+        //       method: 'wallet_addEthereumChain',
+        //       params: [networkParams[parseInt(42161)]],
+        //     })
+        //   } catch (error) {
+        //     throw new Error(error)
+        //   }
+        // }
         commit('setActive', true)
         console.log('connected')
 
@@ -66,6 +74,7 @@ const web3Module = {
           }
           console.log('accountsChanged', accounts[0])
         })
+
         provider.on('chainChanged', async chainId => {
           chainId = parseInt(chainId)
           commit('setChainId', chainId)
@@ -85,6 +94,12 @@ const web3Module = {
       commit('setAccount', null)
       commit('setActive', false)
       commit('setLibrary', getLibrary())
+    },
+
+    async getBalance({ state, commit }) {
+      const balance = await state.library.eth.getBalance(state.account)
+      commit('setBalance', balance)
+      console.log('setBalance', balance)
     },
   },
 }

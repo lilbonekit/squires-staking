@@ -34,7 +34,7 @@ const state = reactive({
 
 const homePageLoading = computed(() => store.state.homePageLoading)
 const isHoverClass = computed(() => (!state.gateOpen && state.mouseHovered ? true : false))
-const isWrongNetwork = computed(() => (store.state.web3.chainId !== 42161 ? true : false))
+const isWrongNetwork = computed(() => (store.state.web3.chainId !== 5 ? true : false))
 const isGateOpen = computed(() => (state.gateOpen ? true : false))
 const disconnectedWallet = computed(() => (store.state.web3.active ? false : true))
 const changedAccount = computed(() => store.state.web3.account)
@@ -64,14 +64,14 @@ watch(isGateOpen, newStatus => {
 
 watch(disconnectedWallet, newStatus => {
   if (newStatus === true) {
-    store.commit('user/setLoggedIn', false)
+    store.commit('web3/setLoggedIn', false)
     router.push('/')
   }
 })
 
 watch(changedAccount, (newAccount, oldAccount) => {
   if (newAccount !== oldAccount) {
-    store.commit('user/setLoggedIn', false)
+    store.commit('web3/setLoggedIn', false)
     router.push('/')
   }
 })
@@ -131,10 +131,14 @@ const handleClickCloseMenu = () => {
 
 onMounted(async () => {
   if (store.state.web3.active === false) router.push('/')
+  if (isWrongNetwork.value) state.gateOpen = false
   store.commit('setHomePageLoading', true)
   try {
-    await store.dispatch('socket/getSquires')
-    await store.dispatch('socket/getInventoryItems')
+    if (store.state.socket.socketInstance && store.state.web3.active === true) {
+      await store.dispatch('squires/getApproved')
+      await store.dispatch('socket/getSquires')
+      await store.dispatch('socket/getInventoryItems')
+    }
   } catch (error) {
     store.commit('setHomePageLoading', false)
     console.log(error)
@@ -163,7 +167,7 @@ onMounted(async () => {
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
       />
-      <!-- <approve-menus /> -->
+      <approve-menus />
       <deposit-menu
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"

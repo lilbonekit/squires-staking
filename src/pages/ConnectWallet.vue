@@ -13,7 +13,7 @@ const state = reactive({
   loading: true,
 })
 
-const isLoggedIn = computed(() => (store.state.user.loggedIn ? true : false))
+const isLoggedIn = computed(() => (store.state.web3.loggedIn ? true : false))
 const initWeb3Modal = computed(() => store.state.web3.web3Modal)
 
 watch(initWeb3Modal, newWeb3Modal => {
