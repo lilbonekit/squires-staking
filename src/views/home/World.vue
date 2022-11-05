@@ -133,6 +133,6 @@ const emit = defineEmits(['handle-hover-map-region', 'handle-click-label', 'hand
     <button id="Audio-Toggle" onclick="play()">
       <img src="/assets/images/beta/i/kote-icon-sound.png" />
     </button>
-    <audio id="Audio-Play" autoplay loop src="https://knightsoftheether.com/tnet-main/music/atmo2_1.mp3"></audio>
+    <audio id="Audio-Play" autoplay loop src="/assets/audio/atmo2_1.mp3"></audio>
   </div>
 </template>

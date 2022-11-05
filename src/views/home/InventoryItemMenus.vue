@@ -1,6 +1,7 @@
 <script setup>
 import { computed, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
+import { squiresType } from '@/config/constants/squiresType'
 
 const store = useStore()
 
@@ -85,11 +86,11 @@ const handleClickSendFief = async () => {
     <main id="Squire-Console" class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div id="squiresInventory" v-for="(squire, index) in store.state.items.squires" :key="index">
+          <div id="squiresInventory" v-for="(squire, index) in store.state.items.squires.sort((a, b) => a.tokenId - b.tokenId)" :key="index">
             <div class="item token" id="squireSelectedQuesting">
               <div class="token-image">
-                <div class="menu-label">{{ squire.type }}</div>
-                <img :src="squire.image" />
+                <div class="menu-label">{{ squiresType[squire.type].typeName }}</div>
+                <img :src="squiresType[squire.type].image" />
               </div>
               <div class="token-stats">
                 <ul>

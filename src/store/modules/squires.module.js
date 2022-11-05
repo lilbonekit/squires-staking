@@ -7,7 +7,7 @@ const squiresModule = {
   state: {
     approved: false,
     loading: false,
-    data: [],
+    squiresDeposited: [],
     squiresToDeposit: [],
   },
   getters: {},
@@ -18,8 +18,8 @@ const squiresModule = {
     setLoading(state, status) {
       state.loading = status
     },
-    setData(state, payload) {
-      state.data = payload
+    setSquiresDeposited(state, payload) {
+      state.squiresDeposited = payload
     },
     setSquiresToDeposit(state, payload) {
       state.squiresToDeposit = payload
@@ -90,44 +90,54 @@ const squiresModule = {
         commit('setLoading', false)
       }
     },
-    async squiresNoQuesting({ rootState, commit }) {
+    async getSquiresNoneQuesting({ rootState, commit }) {
       commit('setLoading', true)
-      commit('setData', [])
-      const pullGraph = await subgraphService.graphNQ(rootState.web3.account)
-      const squires = new Array(pullGraph)
-      commit('setData', squires[0])
+      commit('setSquiresDeposited', [])
+      const squiresDepositedNQ = rootState.items.squires.filter(squire => squire.quest === 'None')
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedNQ.sort((a, b) => a.tokenId - b.tokenId),
+      )
       commit('setLoading', false)
     },
-    async squiresQuestingForest({ rootState, commit }) {
+    async getSquiresQuestingForest({ rootState, commit }) {
       commit('setLoading', true)
-      commit('setData', [])
-      const pullGraph = await subgraphService.graphQF(rootState.web3.account)
-      const squires = new Array(pullGraph)
-      commit('setData', squires[0])
+      commit('setSquiresDeposited', [])
+      const squiresDepositedQF = rootState.items.squires.filter(squire => squire.quest === 'forest')
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedQF.sort((a, b) => a.tokenId - b.tokenId),
+      )
       commit('setLoading', false)
     },
-    async squiresQuestingMountain({ rootState, commit }) {
+    async getSquiresQuestingTemple({ rootState, commit }) {
       commit('setLoading', true)
-      commit('setData', [])
-      const pullGraph = await subgraphService.graphQM(rootState.web3.account)
-      const squires = new Array(pullGraph)
-      commit('setData', squires[0])
+      commit('setSquiresDeposited', [])
+      const squiresDepositedQT = rootState.items.squires.filter(squire => squire.quest === 'temple')
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedQT.sort((a, b) => a.tokenId - b.tokenId),
+      )
       commit('setLoading', false)
     },
-    async squiresQuestingCavern({ rootState, commit }) {
+    async getSquiresQuestingCavern({ rootState, commit }) {
       commit('setLoading', true)
-      commit('setData', [])
-      const pullGraph = await subgraphService.graphQC(rootState.web3.account)
-      const squires = new Array(pullGraph)
-      commit('setData', squires[0])
+      commit('setSquiresDeposited', [])
+      const squiresDepositedQC = rootState.items.squires.filter(squire => squire.quest === 'cavern')
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedQC.sort((a, b) => a.tokenId - b.tokenId),
+      )
       commit('setLoading', false)
     },
-    async squiresQuestingTemple({ rootState, commit }) {
+    async getSquiresQuestingMountain({ rootState, commit }) {
       commit('setLoading', true)
-      commit('setData', [])
-      const pullGraph = await subgraphService.graphQT(rootState.web3.account)
-      const squires = new Array(pullGraph)
-      commit('setData', squires[0])
+      commit('setSquiresDeposited', [])
+      const squiresDepositedQM = rootState.items.squires.filter(squire => squire.quest === 'mountain')
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedQM.sort((a, b) => a.tokenId - b.tokenId),
+      )
       commit('setLoading', false)
     },
   },
