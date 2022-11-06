@@ -1,5 +1,6 @@
 import { koteStorage, squireTest } from '@/config/constants/contracts'
 import * as subgraphService from '@/services/subgraph.service'
+import * as socketService from '@/services/socket.service'
 import getContract from '@/utils/getContract'
 
 const squiresModule = {
@@ -139,6 +140,30 @@ const squiresModule = {
         squiresDepositedQM.sort((a, b) => a.tokenId - b.tokenId),
       )
       commit('setLoading', false)
+    },
+    async startQuest({ rootState, commit }, { questType, selectedSquiresId }) {
+      commit('setLoading', true)
+      await socketService.startQuest(rootState.socket.socketInstance, rootState.web3.library, rootState.web3.account, questType, selectedSquiresId)
+      let squiresDepositedNQ = rootState.items.squires.filter(squire => squire.quest === 'None')
+      selectedSquiresId.forEach(squireId => {
+        squiresDepositedNQ = squiresDepositedNQ.filter(squire => squire.tokenId !== squireId)
+      })
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedNQ.sort((a, b) => a.tokenId - b.tokenId),
+      )
+    },
+    async finishQuest({ rootState, commit }, { questType, selectedSquiresId }) {
+      commit('setLoading', true)
+      await socketService.finishQuest(rootState.socket.socketInstance, rootState.web3.library, rootState.web3.account, selectedSquiresId)
+      let squiresDepositedQuesting = rootState.items.squires.filter(squire => squire.quest === questType)
+      selectedSquiresId.forEach(squireId => {
+        squiresDepositedQuesting = squiresDepositedQuesting.filter(squire => squire.tokenId !== squireId)
+      })
+      commit(
+        'setSquiresDeposited',
+        squiresDepositedQuesting.sort((a, b) => a.tokenId - b.tokenId),
+      )
     },
   },
 }

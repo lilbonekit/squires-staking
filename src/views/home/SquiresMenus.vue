@@ -70,23 +70,45 @@ const handleSelectSquire = id => {
   else state.selectedSquiresId.push(id)
 }
 
-const handleClickSendFew = async () => {
+const handleClickSendFew = async questType => {
+  if (state.selectedSquiresId.length > 0) {
+    console.log(state.selectedSquiresId)
+    await store.dispatch('squires/startQuest', { questType, selectedSquiresId: state.selectedSquiresId })
+    state.selectedSquiresId = []
+  }
+}
+
+const handleClickSendAll = async questType => {
+  console.log(state.selectedSquiresId)
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
   state.selectedSquiresId = []
 }
 
-const handleClickSendAll = async () => {
+const handleClickReturnFew = async questType => {
+  if (state.selectedSquiresId.length > 0) {
+    console.log(state.selectedSquiresId)
+    await store.dispatch('squires/finishQuest', { questType, selectedSquiresId: state.selectedSquiresId })
+    state.selectedSquiresId = []
+  }
+}
+
+const handleClickReturnAll = async questType => {
+  console.log(state.selectedSquiresId)
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
   state.selectedSquiresId = []
 }
 
-const handleClickReturnFew = async () => {
-  state.selectedSquiresId = []
-}
-
-const handleClickReturnAll = async () => {
-  state.selectedSquiresId = []
-}
-
-const handleClickReturnAllandRestart = async () => {
+const handleClickReturnAllandRestart = async questType => {
+  console.log(state.selectedSquiresId)
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
+  await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
+  if (questType === 'forest') store.dispatch('squires/getSquiresQuestingForest')
+  if (questType === 'mountain') store.dispatch('squires/getSquiresQuestingMountain')
+  if (questType === 'cavern') store.dispatch('squires/getSquiresQuestingCavern')
+  if (questType === 'temple') store.dispatch('squires/getSquiresQuestingTemple')
   state.selectedSquiresId = []
 }
 
@@ -164,13 +186,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickSendFew"
+            @click="() => handleClickSendFew('forest')"
           >
             <span class="num-selected"
               ><span>Send Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickSendAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickSendAll('forest')"
+          >
             Send All
           </button>
         </footer>
@@ -256,13 +283,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickReturnFew"
+            @click="() => handleClickReturnFew('forest')"
           >
             <span class="num-selected"
               ><span>Return Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickReturnAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickReturnAll('forest')"
+          >
             Return All
           </button>
         </footer>
@@ -271,7 +303,7 @@ const getTimestamp = async () => {
             class="btn"
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
-            @click="handleClickReturnAllandRestart"
+            @click="() => handleClickReturnAllandRestart('forest')"
           >
             Return All and Restart Quest
           </button>
@@ -345,13 +377,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickSendFew"
+            @click="() => handleClickSendFew('mountain')"
           >
             <span class="num-selected"
               ><span>Send Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickSendAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickSendAll('mountain')"
+          >
             Send All
           </button>
         </footer>
@@ -437,13 +474,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickReturnFew"
+            @click="() => handleClickReturnFew('mountain')"
           >
             <span class="num-selected"
               ><span>Return Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickReturnAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickReturnAll('mountain')"
+          >
             Return All
           </button>
         </footer>
@@ -452,7 +494,7 @@ const getTimestamp = async () => {
             class="btn"
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
-            @click="handleClickReturnAllandRestart"
+            @click="() => handleClickReturnAllandRestart('mountain')"
           >
             Return All and Restart Quest
           </button>
@@ -527,13 +569,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickSendFew"
+            @click="() => handleClickSendFew('cavern')"
           >
             <span class="num-selected"
               ><span>Send Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickSendAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickSendAll('cavern')"
+          >
             Send All
           </button>
         </footer>
@@ -619,13 +666,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickReturnFew"
+            @click="() => handleClickReturnFew('cavern')"
           >
             <span class="num-selected"
               ><span>Return Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickReturnAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickReturnAll('cavern')"
+          >
             Return All
           </button>
         </footer>
@@ -634,7 +686,7 @@ const getTimestamp = async () => {
             class="btn"
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
-            @click="handleClickReturnAllandRestart"
+            @click="() => handleClickReturnAllandRestart('cavern')"
           >
             Return All and Restart Quest
           </button>
@@ -710,13 +762,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickSendFew"
+            @click="() => handleClickSendFew('temple')"
           >
             <span class="num-selected"
               ><span>Send Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickSendAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickSendAll('temple')"
+          >
             Send All
           </button>
         </footer>
@@ -802,13 +859,18 @@ const getTimestamp = async () => {
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
             v-if="showSendBtn"
-            @click="handleClickReturnFew"
+            @click="() => handleClickReturnFew('temple')"
           >
             <span class="num-selected"
               ><span>Return Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickReturnAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading }"
+            :disabled="store.state.squires.loading"
+            @click="() => handleClickReturnAll('temple')"
+          >
             Return All
           </button>
         </footer>
@@ -817,7 +879,7 @@ const getTimestamp = async () => {
             class="btn"
             :class="{ quest: store.state.squires.loading }"
             :disabled="store.state.squires.loading"
-            @click="handleClickReturnAllandRestart"
+            @click="() => handleClickReturnAllandRestart('temple')"
           >
             Return All and Restart Quest
           </button>

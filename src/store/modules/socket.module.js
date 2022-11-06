@@ -33,20 +33,20 @@ const socketModule = {
             const squires = response.squires
             const squireTotal = socketService.getSquireTotal(squires)
             commit('items/setSquireTotal', squireTotal, { root: true })
-            console.log('setSquireTotal', squireTotal)
+            console.log('setSquireTotal:', squireTotal)
           } else {
             throw new Error(response.message)
           }
         })
 
         socketInstance.on('update squire', updatedSquire => {
-          const squires = rootState.user.squires.map(squire => {
+          const squires = rootState.items.squires.map(squire => {
             if (squire.tokenId == updatedSquire.tokenId) squire = updatedSquire
             return squire
           })
           const squireTotal = socketService.getSquireTotal(squires)
           commit('items/setSquireTotal', squireTotal, { root: true })
-          console.log('setSquireTotal', squireTotal)
+          console.log('setSquireTotal:', squireTotal)
         })
 
         socketInstance.on('update fief', fief => {
@@ -72,6 +72,44 @@ const socketModule = {
             console.log('inventoryItems:', inventoryItems)
             commit('setHomePageLoading', false, { root: true })
           }
+        })
+
+        socketInstance.on('show return', questType => {
+          commit('squires/setLoading', false, { root: true })
+          console.log('questType:', questType)
+        })
+
+        socketInstance.on('quest data', response => {
+          console.log('questData:', response)
+          const questData = response
+          let { potions, potionTotal, rings, ringTotal, trinkets, trinketTotal } = rootState.items
+          questData.forEach(data => {
+            data.items.forEach(item => {
+              console.log('item:', item)
+              if (item.type === 'potion') {
+                potionTotal += 1
+                potions[item.id - 100] += 1
+                console.log('potionTotal:', potionTotal)
+                console.log('potions:', potions)
+                commit('items/setPotionTotal', { potions, potionTotal }, { root: true })
+              }
+              if (item.type === 'trinket') {
+                trinketTotal += 1
+                trinkets[item.id - 100] += 1
+                console.log('trinketTotal:', trinketTotal)
+                console.log('trinkets:', trinkets)
+                commit('items/setTrinketTotal', { trinkets, trinketTotal }, { root: true })
+              }
+              if (item.type === 'ring') {
+                ringTotal += 1
+                rings[item.id - 100] += 1
+                console.log('ringTotal:', ringTotal)
+                console.log('rings:', rings)
+                commit('items/setRingTotal', { rings, ringTotal }, { root: true })
+              }
+            })
+          })
+          commit('squires/setLoading', false, { root: true })
         })
       } catch (error) {
         throw new Error(error)
