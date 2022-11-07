@@ -12,6 +12,7 @@ const itemsModule = {
     ringTotal: 0,
     trinkets: new Array(27).fill(0),
     trinketTotal: 0,
+    inventoryItems: [],
   },
   getters: {},
   mutations: {
@@ -35,6 +36,9 @@ const itemsModule = {
     setTrinketTotal(state, payload) {
       state.trinkets = payload.trinkets
       state.trinketTotal = payload.trinketTotal
+    },
+    setInventoryItems(state, payload) {
+      state.inventoryItems = payload
     },
   },
   actions: {},

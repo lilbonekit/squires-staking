@@ -11,6 +11,7 @@ const props = defineProps({
 const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active-status'])
 
 const state = reactive({
+  loadingMenuDescription: 'Loading Squires',
   currentMenuActiveStatus: '',
   selectedSquiresId: [],
 })
@@ -28,6 +29,7 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
   if (newStatus === 'deposit') {
     state.currentMenuActiveStatus = oldStatus
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Squires'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresToDeposit')
     }, 750)
@@ -37,6 +39,7 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
 const isSelected = id => (state.selectedSquiresId.filter(squireId => squireId === id).length > 0 ? true : false)
 
 const handleClickRefresh = async () => {
+  state.loadingMenuDescription = 'Loading Squires to Deposit'
   state.selectedSquiresId = []
   await store.dispatch('squires/getSquiresToDeposit')
 }
@@ -48,15 +51,19 @@ const handleSelectSquire = id => {
 
 const handleClickDepositFew = async () => {
   if (state.selectedSquiresId.length > 0) {
+    state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
     await store.dispatch('squires/depositSquires', state.selectedSquiresId)
     state.selectedSquiresId = []
   }
 }
 
 const handleClickDepositAll = async () => {
-  const selectedSquiresId = store.state.squires.squiresToDeposit.map(squire => squire.id)
-  await store.dispatch('squires/depositSquires', selectedSquiresId)
-  state.selectedSquiresId = []
+  if (store.state.squires.squiresToDeposit.length > 0) {
+    state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
+    const selectedSquiresId = store.state.squires.squiresToDeposit.map(squire => squire.id)
+    await store.dispatch('squires/depositSquires', selectedSquiresId)
+    state.selectedSquiresId = []
+  }
 }
 </script>
 
@@ -68,7 +75,7 @@ const handleClickDepositAll = async () => {
       <div class="menu-label">Deposit Squires</div>
       <p class="menu-description">
         <template v-if="store.state.squires.loading">
-          Loading Squires<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"

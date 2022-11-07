@@ -65,11 +65,12 @@ const socketModule = {
         socketInstance.on('items', response => {
           if (response) {
             const items = response.items
+            commit('items/setInventoryItems', items, { root: true })
+            console.log('inventoryItems:', items)
             const inventoryItems = socketService.getInventoryItemsTotal(items, rootState)
             commit('items/setPotionTotal', inventoryItems[0], { root: true })
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
-            console.log('inventoryItems:', inventoryItems)
             commit('setHomePageLoading', false, { root: true })
           }
         })
@@ -82,6 +83,7 @@ const socketModule = {
         socketInstance.on('quest data', response => {
           console.log('questData:', response)
           const questData = response
+          commit('squires/setLoot', questData, { root: true })
           let { potions, potionTotal, rings, ringTotal, trinkets, trinketTotal } = rootState.items
           questData.forEach(data => {
             data.items.forEach(item => {
@@ -89,22 +91,16 @@ const socketModule = {
               if (item.type === 'potion') {
                 potionTotal += 1
                 potions[item.id - 100] += 1
-                console.log('potionTotal:', potionTotal)
-                console.log('potions:', potions)
                 commit('items/setPotionTotal', { potions, potionTotal }, { root: true })
               }
               if (item.type === 'trinket') {
                 trinketTotal += 1
                 trinkets[item.id - 100] += 1
-                console.log('trinketTotal:', trinketTotal)
-                console.log('trinkets:', trinkets)
                 commit('items/setTrinketTotal', { trinkets, trinketTotal }, { root: true })
               }
               if (item.type === 'ring') {
                 ringTotal += 1
                 rings[item.id - 100] += 1
-                console.log('ringTotal:', ringTotal)
-                console.log('rings:', rings)
                 commit('items/setRingTotal', { rings, ringTotal }, { root: true })
               }
             })
@@ -112,6 +108,7 @@ const socketModule = {
           commit('squires/setLoading', false, { root: true })
         })
       } catch (error) {
+        commit('squires/setLoading', false, { root: true })
         throw new Error(error)
       }
     },

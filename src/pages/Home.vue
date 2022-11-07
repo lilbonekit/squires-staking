@@ -12,6 +12,7 @@ import DepositMenu from '@/views/home/DepositMenu.vue'
 import SquiresMenus from '@/views/home/SquiresMenus.vue'
 import AboutMenus from '@/views/home/AboutMenus.vue'
 import InventoryItemMenus from '@/views/home/InventoryItemMenus.vue'
+import LootMenu from '@/views/home/LootMenu.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -174,6 +175,11 @@ onMounted(async () => {
         @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
       />
       <squires-menus
+        :squires-menu-active-status="state.squiresMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+      />
+      <loot-menu
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
         @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"

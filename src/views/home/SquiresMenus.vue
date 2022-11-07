@@ -13,6 +13,8 @@ const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active
 
 const state = reactive({
   selectedSquiresId: [],
+  loadingMenuDescription: 'Loading Squires',
+  timeNow: Math.floor(Date.now() / 1000),
 })
 
 const menuActiveStatus = computed(() => props.squiresMenuActiveStatus)
@@ -29,38 +31,55 @@ const returnMenuDescription = computed(() =>
     ? 'Select the squires you would like to return from questing'
     : 'No squires are currently questing!',
 )
+const lootData = computed(() => store.state.squires.loot)
 
 watch(menuActiveStatus, newStatus => {
   if (newStatus === 'forest/send' || newStatus === 'mountain/send' || newStatus === 'cavern/send' || newStatus === 'temple/send')
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Squires'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresNoneQuesting')
     }, 750)
   if (newStatus === 'forest/return')
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Questing Squires in Forest'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresQuestingForest')
+      state.timeNow = Math.floor(Date.now() / 1000)
     }, 750)
   if (newStatus === 'mountain/return')
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Questing Squires in Mountain'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresQuestingMountain')
+      state.timeNow = Math.floor(Date.now() / 1000)
     }, 750)
   if (newStatus === 'cavern/return')
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Questing Squires in Cavern'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresQuestingCavern')
+      state.timeNow = Math.floor(Date.now() / 1000)
     }, 750)
   if (newStatus === 'temple/return')
     setTimeout(() => {
+      state.loadingMenuDescription = 'Loading Questing Squires in Temple'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresQuestingTemple')
+      state.timeNow = Math.floor(Date.now() / 1000)
     }, 750)
+})
+
+watch(lootData, newData => {
+  if (newData.length > 0) {
+    emit('handle-squires-menu-active-status', 'loot')
+  }
 })
 
 const isSelected = id => (state.selectedSquiresId.filter(squireId => squireId === id).length > 0 ? true : false)
 
-const handleClickRefresh = async dispatchType => {
+const handleClickRefresh = async (dispatchType, loadingMessage) => {
+  state.loadingMenuDescription = loadingMessage
   state.selectedSquiresId = []
   await store.dispatch(dispatchType)
 }
@@ -72,14 +91,14 @@ const handleSelectSquire = id => {
 
 const handleClickSendFew = async questType => {
   if (state.selectedSquiresId.length > 0) {
-    console.log(state.selectedSquiresId)
+    state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
     await store.dispatch('squires/startQuest', { questType, selectedSquiresId: state.selectedSquiresId })
     state.selectedSquiresId = []
   }
 }
 
 const handleClickSendAll = async questType => {
-  console.log(state.selectedSquiresId)
+  state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
   const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
   await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
   state.selectedSquiresId = []
@@ -87,21 +106,25 @@ const handleClickSendAll = async questType => {
 
 const handleClickReturnFew = async questType => {
   if (state.selectedSquiresId.length > 0) {
-    console.log(state.selectedSquiresId)
+    state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+    store.commit('squires/setIsRestart', false)
     await store.dispatch('squires/finishQuest', { questType, selectedSquiresId: state.selectedSquiresId })
     state.selectedSquiresId = []
   }
 }
 
 const handleClickReturnAll = async questType => {
-  console.log(state.selectedSquiresId)
+  console.log(store.state.squires.squiresDeposited)
+  state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  store.commit('squires/setIsRestart', false)
   const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
   await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
   state.selectedSquiresId = []
 }
 
 const handleClickReturnAllandRestart = async questType => {
-  console.log(state.selectedSquiresId)
+  state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  store.commit('squires/setIsRestart', true)
   const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
   await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
   await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
@@ -110,12 +133,6 @@ const handleClickReturnAllandRestart = async questType => {
   if (questType === 'cavern') store.dispatch('squires/getSquiresQuestingCavern')
   if (questType === 'temple') store.dispatch('squires/getSquiresQuestingTemple')
   state.selectedSquiresId = []
-}
-
-const getTimestamp = async () => {
-  const blockn = await store.state.web3.library.eth.getBlockNumber()
-  const block = await store.state.web3.library.eth.getBlock(blockn)
-  return block.timestamp
 }
 </script>
 
@@ -127,7 +144,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Forest</div>
       <p class="menu-description" id="Forest-Description-Send">
         <template v-if="store.state.squires.loading">
-          Loading Squires<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -140,7 +157,9 @@ const getTimestamp = async () => {
       <button id="Forest-return" class="btn" @click="() => emit('handle-squires-menu-active-status', 'forest/return')">
         Check Squires Ready to Return
       </button>
-      <button id="refresh-return-forest" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting')">Refresh</button>
+      <button id="refresh-return-forest" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting', 'Loading Squires')">
+        Refresh
+      </button>
       <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
         Deposit
       </button>
@@ -211,7 +230,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Forest</div>
       <p class="menu-description" id="Forest-Description-Return">
         <template v-if="store.state.squires.loading">
-          Loading Questing Squires in Forest<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -234,7 +253,13 @@ const getTimestamp = async () => {
       <p id="Forest-message" class="menu-description" style="color: grey; text-size: 20px">
         *If you can't see your squires, hit <i>refresh</i> below
       </p>
-      <button id="refresh-quest-forest" class="btn" @click="() => handleClickRefresh('squires/getSquiresQuestingForest')">Refresh</button>
+      <button
+        id="refresh-quest-forest"
+        class="btn"
+        @click="() => handleClickRefresh('squires/getSquiresQuestingForest', 'Loading Questing Squires in Forest')"
+      >
+        Refresh
+      </button>
     </header>
     <main id="Forest-Console" class="menu-main">
       <div class="content">
@@ -264,10 +289,10 @@ const getTimestamp = async () => {
                     <span class="stat-value">{{ squire.faith || 4 }}</span>
                   </li>
                 </ul>
-                <button class="btn quest" v-if="squire.finish - getTimestamp() > 0">
+                <button class="btn quest" v-if="squire.finish - state.timeNow > 0">
                   <span class="token-number"
                     >#{{ squire.tokenId }} is still questing:
-                    <span> {{ new Date((squire.finish - getTimestamp()) * 1000).toISOString().substring(11, 8) }} </span></span
+                    <span> {{ new Date((squire.finish - state.timeNow) * 1000).toISOString().substring(11, 8) }} </span></span
                   >
                 </button>
                 <button class="btn quest" @click="() => handleSelectSquire(squire.tokenId)" v-else>
@@ -318,7 +343,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Mountain</div>
       <p class="menu-description" id="Mountain-Description-Send">
         <template v-if="store.state.squires.loading">
-          Loading Squires<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -331,7 +356,9 @@ const getTimestamp = async () => {
       <button id="Mountain-return" class="btn" @click="() => emit('handle-squires-menu-active-status', 'mountain/return')">
         Check Squires Ready to Return
       </button>
-      <button id="refresh-return-mountain" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting')">Refresh</button>
+      <button id="refresh-return-mountain" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting', 'Loading Squires')">
+        Refresh
+      </button>
       <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
         Deposit
       </button>
@@ -402,7 +429,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Mountain</div>
       <p class="menu-description" id="Mountain-Description-Return">
         <template v-if="store.state.squires.loading">
-          Loading Questing Squires in Mountain<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -425,7 +452,13 @@ const getTimestamp = async () => {
       <p id="Mountain-message" class="menu-description" style="color: grey; text-size: 20px">
         *If you can't see your squires, hit <i>refresh</i> below
       </p>
-      <button id="refresh-quest-mountain" class="btn" @click="() => handleClickRefresh('squires/getSquiresQuestingMountain')">Refresh</button>
+      <button
+        id="refresh-quest-mountain"
+        class="btn"
+        @click="() => handleClickRefresh('squires/getSquiresQuestingMountain', 'Loading Questing Squires in Mountain')"
+      >
+        Refresh
+      </button>
     </header>
     <main id="Mountain-Console" class="menu-main">
       <div class="content">
@@ -455,10 +488,10 @@ const getTimestamp = async () => {
                     <span class="stat-value">{{ squire.faith || 4 }}</span>
                   </li>
                 </ul>
-                <button class="btn quest" v-if="squire.finish - getTimestamp() > 0">
+                <button class="btn quest" v-if="squire.finish - state.timeNow > 0">
                   <span class="token-number"
                     >#{{ squire.tokenId }} is still questing:
-                    <span> {{ new Date((squire.finish - getTimestamp()) * 1000).toISOString().substring(11, 8) }} </span></span
+                    <span> {{ new Date((squire.finish - state.timeNow) * 1000).toISOString().substring(11, 8) }} </span></span
                   >
                 </button>
                 <button class="btn quest" @click="() => handleSelectSquire(squire.tokenId)" v-else>
@@ -510,7 +543,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Cavern</div>
       <p class="menu-description" id="Cavern-Description-Send">
         <template v-if="store.state.squires.loading">
-          Loading Squires<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -523,7 +556,9 @@ const getTimestamp = async () => {
       <button id="Cavern-return" class="btn" @click="() => emit('handle-squires-menu-active-status', 'cavern/return')">
         Check Squires Ready to Return
       </button>
-      <button id="refresh-return-cavern" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting')">Refresh</button>
+      <button id="refresh-return-cavern" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting', 'Loading Squires')">
+        Refresh
+      </button>
       <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
         Deposit
       </button>
@@ -594,7 +629,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Cavern</div>
       <p class="menu-description" id="Cavern-Description-Return">
         <template v-if="store.state.squires.loading">
-          Loading Questing Squires in Cavern<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -617,7 +652,13 @@ const getTimestamp = async () => {
       <p id="Cavern-message" class="menu-description" style="color: grey; text-size: 20px">
         *If you can't see your squires, hit <i>refresh</i> below
       </p>
-      <button id="refresh-quest-cavern" class="btn" @click="() => handleClickRefresh('squires/getSquiresQuestingCavern')">Refresh</button>
+      <button
+        id="refresh-quest-cavern"
+        class="btn"
+        @click="() => handleClickRefresh('squires/getSquiresQuestingCavern', 'Loading Questing Squires in Cavern')"
+      >
+        Refresh
+      </button>
     </header>
     <main id="Cavern-Console" class="menu-main">
       <div class="content">
@@ -647,10 +688,10 @@ const getTimestamp = async () => {
                     <span class="stat-value">{{ squire.faith || 4 }}</span>
                   </li>
                 </ul>
-                <button class="btn quest" v-if="squire.finish - getTimestamp() > 0">
+                <button class="btn quest" v-if="squire.finish - state.timeNow > 0">
                   <span class="token-number"
                     >#{{ squire.tokenId }} is still questing:
-                    <span> {{ new Date((squire.finish - getTimestamp()) * 1000).toISOString().substring(11, 8) }} </span></span
+                    <span> {{ new Date((squire.finish - state.timeNow) * 1000).toISOString().substring(11, 8) }} </span></span
                   >
                 </button>
                 <button class="btn quest" @click="() => handleSelectSquire(squire.tokenId)" v-else>
@@ -703,7 +744,7 @@ const getTimestamp = async () => {
       <p class="menu-description" id="Temple-Closed">Temple is closed until the next day of worship.<br /><br />You can return your Squires Only</p>
       <p class="menu-description" id="Temple-Description-Send">
         <template v-if="store.state.squires.loading">
-          Loading Squires<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -716,7 +757,9 @@ const getTimestamp = async () => {
       <button id="Temple-return" class="btn" @click="() => emit('handle-squires-menu-active-status', 'temple/return')">
         Check Squires Ready to Return
       </button>
-      <button id="refresh-return-temple" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting')">Refresh</button>
+      <button id="refresh-return-temple" class="btn" @click="() => handleClickRefresh('squires/getSquiresNoneQuesting', 'Loading Squires')">
+        Refresh
+      </button>
       <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
         Deposit
       </button>
@@ -787,7 +830,7 @@ const getTimestamp = async () => {
       <div class="menu-label">Temple</div>
       <p class="menu-description" id="Temple-Description-Return">
         <template v-if="store.state.squires.loading">
-          Loading Questing Squires in Temple<br /><img
+          {{ state.loadingMenuDescription }}<br /><img
             class="menu-description"
             style="width: 25%; display: block; margin-left: auto; margin-right: auto"
             src="/assets/images/tnet/images/loading.gif"
@@ -810,7 +853,13 @@ const getTimestamp = async () => {
       <p id="Temple-message" class="menu-description" style="color: grey; text-size: 20px">
         *If you can't see your squires, hit <i>refresh</i> below
       </p>
-      <button id="refresh-quest-temple" class="btn" @click="() => handleClickRefresh('squires/getSquiresQuestingTemple')">Refresh</button>
+      <button
+        id="refresh-quest-temple"
+        class="btn"
+        @click="() => handleClickRefresh('squires/getSquiresQuestingTemple', 'Loading Questing Squires in Temple')"
+      >
+        Refresh
+      </button>
     </header>
     <main id="Temple-Console" class="menu-main">
       <div class="content">
@@ -840,10 +889,10 @@ const getTimestamp = async () => {
                     <span class="stat-value">{{ squire.faith || 4 }}</span>
                   </li>
                 </ul>
-                <button class="btn quest" v-if="squire.finish - getTimestamp() > 0">
+                <button class="btn quest" v-if="squire.finish - state.timeNow > 0">
                   <span class="token-number"
                     >#{{ squire.tokenId }} is still questing:
-                    <span> {{ new Date((squire.finish - getTimestamp()) * 1000).toISOString().substring(11, 8) }} </span></span
+                    <span> {{ new Date((squire.finish - state.timeNow) * 1000).toISOString().substring(11, 8) }} </span></span
                   >
                 </button>
                 <button class="btn quest" @click="() => handleSelectSquire(squire.tokenId)" v-else>

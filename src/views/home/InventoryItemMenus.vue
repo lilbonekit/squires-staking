@@ -87,7 +87,7 @@ const handleClickSendFief = async () => {
       <div class="content">
         <div class="menu-list scrolling-list">
           <div id="squiresInventory" v-for="(squire, index) in store.state.items.squires.sort((a, b) => a.tokenId - b.tokenId)" :key="index">
-            <div class="item token" id="squireSelectedQuesting">
+            <div class="item token">
               <div class="token-image">
                 <div class="menu-label">{{ squiresType[squire.type].typeName }}</div>
                 <img :src="squiresType[squire.type].image" />
