@@ -77,6 +77,22 @@ watch(changedAccount, (newAccount, oldAccount) => {
   }
 })
 
+onMounted(async () => {
+  if (store.state.web3.active === false) router.push('/')
+  if (isWrongNetwork.value) state.gateOpen = false
+  store.commit('setHomePageLoading', true)
+  try {
+    if (store.state.socket.socketInstance && store.state.web3.active === true) {
+      await store.dispatch('squires/getApproved')
+      await store.dispatch('socket/getSquires')
+      await store.dispatch('socket/getInventoryItems')
+    }
+  } catch (error) {
+    store.commit('setHomePageLoading', false)
+    console.log(error)
+  }
+})
+
 const handleHoverGateBtn = flag => {
   state.mouseHovered = flag
 }
@@ -129,22 +145,6 @@ const handleClickCloseMenu = () => {
   state.aboutMenuActiveStatus = ''
   state.inventoryItemMenuActiveStatus = ''
 }
-
-onMounted(async () => {
-  if (store.state.web3.active === false) router.push('/')
-  if (isWrongNetwork.value) state.gateOpen = false
-  store.commit('setHomePageLoading', true)
-  try {
-    if (store.state.socket.socketInstance && store.state.web3.active === true) {
-      await store.dispatch('squires/getApproved')
-      await store.dispatch('socket/getSquires')
-      await store.dispatch('socket/getInventoryItems')
-    }
-  } catch (error) {
-    store.commit('setHomePageLoading', false)
-    console.log(error)
-  }
-})
 </script>
 
 <template>

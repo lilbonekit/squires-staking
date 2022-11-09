@@ -28,8 +28,8 @@ const menuDescription = computed(() =>
 watch(menuActiveStatus, (newStatus, oldStatus) => {
   if (newStatus === 'deposit') {
     state.currentMenuActiveStatus = oldStatus
-    setTimeout(() => {
-      state.loadingMenuDescription = 'Loading Squires'
+    setTimeout(async () => {
+      state.loadingMenuDescription = 'Loading Squires to Deposit'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresToDeposit')
     }, 750)
