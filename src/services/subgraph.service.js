@@ -1,246 +1,45 @@
 import axios from 'axios'
 
 export const getSquiresToDepositBySubgraph = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-owner-tracker`, {
+  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/squires-goerli`, {
     query: `
   {
-    squires (
-    where: {
-    owner: "${account}"
-        }
-    )
-  
-    {
-      id
-    }
-  }`,
-  })
-  return results.data.data.squires
-}
-
-export const graphNQ = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
-    query: `
-  {
-    squires (
-    where: {
-    owner: "${account}"
-    questing: false
-        }
-    )
-  
-    {
+    squires(where:{owner:"${account}"}) {
       id
       faith
       luck
-      strength
       wisdom
+      strength
       genesis
-      type
-      questing
-      owner
-      finish
-      lastfief
-      lastupgrade
       image
-      typename
+      type
     }
   }`,
   })
   return results.data.data.squires
 }
 
-export const graphQOld = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
+export const getFiefToDepositBySubgraph = async account => {
+  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/squires-goerli`, {
     query: `
   {
-    squires (
-    where: {owner: "${account}"
-    questing: true
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      type
-      wisdom
-      genesis
-      owner
-      questing
+    fief(id:"${account}") {
+      amount
     }
   }`,
   })
   return results.data.data.squires
 }
 
-export const graphQF = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
+export const getItemsToDepositBySubgraph = async account => {
+  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/squires-goerli`, {
     query: `
   {
-    squires (
-    where: {
-    owner: "${account}"
-    questing: true
-    questtype: "forest"
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      wisdom
-      genesis
-      type
-      questing
+    inventoryItems(where:{owner_contains_nocase:"${account}"}) {
+      itemid
+      itemamount
       owner
-      finish
-      lastfief
-      lastupgrade
-      image
-      typename
-    }
-  }`,
-  })
-  return results.data.data.squires
-}
-
-export const graphQC = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
-    query: `
-  {
-    squires (
-    where: {
-    owner: "${account}"
-    questing: true
-    questtype: "cavern"
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      wisdom
-      genesis
-      type
-      questing
-      owner
-      finish
-      lastfief
-      lastupgrade
-      image
-      typename
-    }
-  }`,
-  })
-  return results.data.data.squires
-}
-
-export const graphQM = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
-    query: `
-  {
-    squires (
-    where: {
-    owner: "${account}"
-    questing: true
-    questtype: "mountain"
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      wisdom
-      genesis
-      type
-      questing
-      owner
-      finish
-      lastfief
-      lastupgrade
-      image
-      typename
-    }
-  }`,
-  })
-  return results.data.data.squires
-}
-
-export const graphQT = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
-    query: `
-  {
-    squires (
-    where: {
-    owner: "${account}"
-    questing: true
-    questtype: "temple"
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      wisdom
-      genesis
-      type
-      questing
-      owner
-      finish
-      lastfief
-      lastupgrade
-      image
-      typename
-    }
-  }`,
-  })
-  return results.data.data.squires
-}
-
-export const graph = async account => {
-  const results = await axios.post(`https://api.thegraph.com/subgraphs/name/0x-g/kote-live`, {
-    query: `
-  {
-    squires (
-    where: {
-    owner: "${account}"
-        }
-    )
-  
-    {
-      id
-      faith
-      luck
-      strength
-      wisdom
-      genesis
-      type
-      questing
-      questtype
-      owner
-      finish
-      lastfief
-      lastupgrade
-      image
-      typename
-      lastitemid
-      lastitemtype
-      lastitemname
-      lastitemlevel
-      lastitemclass
-      lastitemimage
-      lastitemrarity
+      contract
     }
   }`,
   })

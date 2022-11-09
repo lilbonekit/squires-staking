@@ -2,7 +2,7 @@
 import { reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 import { squiresType } from '@/config/constants/squiresType'
-import { itemRarity } from '@/config/constants/itemRarity'
+import { itemRarity } from '@/config/constants/inventoryItems'
 
 const store = useStore()
 
@@ -116,8 +116,7 @@ const handleClickCloseMenu = () => {
             >)
           </div>
           <p class="menu-description">
-            <span v-for="squire in state.upgradedSquires">
-              <div class="item token">
+              <div class="item token" v-for="squire in state.upgradedSquires" :key="squire.tokenId">
                 <div class="token-image">
                   <div class="menu-label">{{ squiresType[squire.type].typeName }}</div>
                   <img :src="squiresType[squire.type].image" />
@@ -146,7 +145,6 @@ const handleClickCloseMenu = () => {
                   </button>
                 </div>
               </div>
-            </span>
           </p>
         </div>
       </div>

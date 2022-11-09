@@ -7,10 +7,10 @@ const store = useStore()
 <template>
   <div class="menu quest-menu" :class="{ 'menu-active': !store.state.squires.approved }" style="z-index: 13">
     <header class="menu-header">
-      <div class="menu-label">All Squires Approving</div>
+      <div class="menu-label">Squires Approving</div>
       <!-- <p class="menu-description">Hey! We recently released a new questing contract:<br />Temple!</p> -->
       <!-- <br /> -->
-      <p class="menu-description">Approve the Squires NFT Contract To Deposit</p>
+      <p class="menu-description">Approve all of the Squires(ERC721) to deposit them into the KoteStorage Bridge Contract</p>
       <template v-if="store.state.squires.loading">
         <img
           class="menu-description"

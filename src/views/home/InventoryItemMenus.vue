@@ -2,6 +2,7 @@
 import { computed, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import { squiresType } from '@/config/constants/squiresType'
+import { RingItems, PotionItems, TrinketItems } from '@/config/constants/inventoryItems'
 
 const store = useStore()
 

@@ -91,35 +91,38 @@ const handleClickDepositAll = async () => {
     <main class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div v-for="squire in store.state.squires.squiresToDeposit">
-            <div class="item token" :class="{ selected: isSelected(squire.id) }">
-              <div class="token-image">
-                <div class="menu-label">{{ squiresType[squire.type || 1].typeName }}</div>
-                <img :src="squiresType[squire.type || 1].image" alt="no img" />
-              </div>
-              <div class="token-stats">
-                <ul>
-                  <li class="stat">
-                    <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
-                    <span class="stat-value">{{ squire.strength || 6 }}</span>
-                  </li>
-                  <li class="stat">
-                    <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
-                    <span class="stat-value">{{ squire.luck || 4 }}</span>
-                  </li>
-                  <li class="stat">
-                    <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
-                    <span class="stat-value">{{ squire.wisdom || 4 }}</span>
-                  </li>
-                  <li class="stat">
-                    <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
-                    <span class="stat-value">{{ squire.faith || 4 }}</span>
-                  </li>
-                </ul>
-                <button class="btn quest" @click="() => handleSelectSquire(squire.id)">
-                  {{ isSelected(squire.id) ? 'Deselect' : 'Select' }} <span class="token-number">#{{ squire.id }}</span>
-                </button>
-              </div>
+          <div
+            class="item token"
+            v-for="squire in store.state.squires.squiresToDeposit"
+            :key="squire.id"
+            :class="{ selected: isSelected(squire.id) }"
+          >
+            <div class="token-image">
+              <div class="menu-label">{{ squiresType[squire.type].typeName }}</div>
+              <img :src="squiresType[squire.type].image" alt="no img" />
+            </div>
+            <div class="token-stats">
+              <ul>
+                <li class="stat">
+                  <i class="stat-icon"><img src="/assets/images/kote-icon-axe.png" /></i>Strength:
+                  <span class="stat-value">{{ squire.strength }}</span>
+                </li>
+                <li class="stat">
+                  <i class="stat-icon"><img src="/assets/images/kote-icon-jewel.png" /></i>Luck:
+                  <span class="stat-value">{{ squire.luck }}</span>
+                </li>
+                <li class="stat">
+                  <i class="stat-icon"><img src="/assets/images/kote-icon-sparkle.png" /></i>Wisdom:
+                  <span class="stat-value">{{ squire.wisdom }}</span>
+                </li>
+                <li class="stat">
+                  <i class="stat-icon"><img src="/assets/images/kote-icon-staff.png" /></i>Faith:
+                  <span class="stat-value">{{ squire.faith }}</span>
+                </li>
+              </ul>
+              <button class="btn quest" @click="() => handleSelectSquire(squire.id)">
+                {{ isSelected(squire.id) ? 'Deselect' : 'Select' }} <span class="token-number">#{{ squire.id }}</span>
+              </button>
             </div>
           </div>
         </div>

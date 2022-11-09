@@ -1,4 +1,4 @@
-import { koteStorage, squireTest } from '@/config/constants/contracts'
+import { koteStorage, koteSquires } from '@/config/constants/contracts'
 import * as subgraphService from '@/services/subgraph.service'
 import * as socketService from '@/services/socket.service'
 import getContract from '@/utils/getContract'
@@ -37,7 +37,7 @@ const squiresModule = {
   actions: {
     async getApproved({ rootState, commit }) {
       try {
-        const squiresContract = getContract(rootState.web3.library, squireTest.abi, squireTest.address)
+        const squiresContract = getContract(rootState.web3.library, koteSquires.abi, koteSquires.address)
         const approvedStatus = await squiresContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
         commit('setApproved', approvedStatus)
         console.log('setApproved:', approvedStatus)
@@ -48,7 +48,7 @@ const squiresModule = {
     async approveSquiresContract({ rootState, commit }) {
       commit('setLoading', true)
       try {
-        const squiresContract = getContract(rootState.web3.library, squireTest.abi, squireTest.address)
+        const squiresContract = getContract(rootState.web3.library, koteSquires.abi, koteSquires.address)
         await squiresContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
         commit('setApproved', true)
         console.log('setApproved:', true)
@@ -81,7 +81,7 @@ const squiresModule = {
     async depositSquires({ rootState, state, commit }, selectedSquiresId) {
       commit('setLoading', true)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
-      const _contractAddress = new Array(selectedSquiresId.length).fill(squireTest.address)
+      const _contractAddress = new Array(selectedSquiresId.length).fill(koteSquires.address)
       const _id = selectedSquiresId
       const _amount = new Array(selectedSquiresId.length).fill(1)
 

@@ -168,7 +168,7 @@ onMounted(async () => {
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
       />
-      <approve-menus />
+      <!-- <approve-menus /> -->
       <deposit-menu
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
