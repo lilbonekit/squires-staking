@@ -28,7 +28,7 @@ export const getFiefToDepositBySubgraph = async account => {
     }
   }`,
   })
-  return results.data.data.squires
+  return results.data.data.fief
 }
 
 export const getItemsToDepositBySubgraph = async account => {
@@ -43,5 +43,5 @@ export const getItemsToDepositBySubgraph = async account => {
     }
   }`,
   })
-  return results.data.data.squires
+  return results.data.data.inventoryItems
 }

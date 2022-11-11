@@ -8,7 +8,9 @@ import World from '@/views/home/World.vue'
 import Menus from '@/views/home/Menus.vue'
 import ApproveMenus from '@/views/home/ApproveMenus.vue'
 import InventoryMenu from '@/views/home/InventoryMenu.vue'
-import DepositMenu from '@/views/home/DepositMenu.vue'
+import DepositSquiresMenu from '@/views/home/DepositSquiresMenu.vue'
+import DepositFiefMenu from '@/views/home/DepositFiefMenu.vue'
+import DepositItemsMenu from '@/views/home/DepositItemsMenu.vue'
 import SquiresMenus from '@/views/home/SquiresMenus.vue'
 import AboutMenus from '@/views/home/AboutMenus.vue'
 import InventoryItemMenus from '@/views/home/InventoryItemMenus.vue'
@@ -77,22 +79,6 @@ watch(changedAccount, (newAccount, oldAccount) => {
   }
 })
 
-onMounted(async () => {
-  if (store.state.web3.active === false) router.push('/')
-  if (isWrongNetwork.value) state.gateOpen = false
-  store.commit('setHomePageLoading', true)
-  try {
-    if (store.state.socket.socketInstance && store.state.web3.active === true) {
-      await store.dispatch('squires/getApproved')
-      await store.dispatch('socket/getSquires')
-      await store.dispatch('socket/getInventoryItems')
-    }
-  } catch (error) {
-    store.commit('setHomePageLoading', false)
-    console.log(error)
-  }
-})
-
 const handleHoverGateBtn = flag => {
   state.mouseHovered = flag
 }
@@ -145,6 +131,24 @@ const handleClickCloseMenu = () => {
   state.aboutMenuActiveStatus = ''
   state.inventoryItemMenuActiveStatus = ''
 }
+
+onMounted(async () => {
+  if (store.state.web3.active === false) router.push('/')
+  if (isWrongNetwork.value) state.gateOpen = false
+  store.commit('setHomePageLoading', true)
+  try {
+    if (store.state.socket.socketInstance && store.state.web3.active === true) {
+      await store.dispatch('items/getApprovedFief')
+      await store.dispatch('items/getApprovedItems')
+      await store.dispatch('squires/getApproved')
+      await store.dispatch('socket/getSquires')
+      await store.dispatch('socket/getInventoryItems')
+    }
+  } catch (error) {
+    store.commit('setHomePageLoading', false)
+    console.log(error)
+  }
+})
 </script>
 
 <template>
@@ -167,12 +171,28 @@ const handleClickCloseMenu = () => {
       <inventory-item-menus
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
+        @handle-click-inventory-item="handleClickInventoryItem"
       />
-      <!-- <approve-menus /> -->
-      <deposit-menu
+      <approve-menus
+        :squires-menu-active-status="state.squiresMenuActiveStatus"
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+        @handle-click-inventory-item="handleClickInventoryItem"
+      />
+      <deposit-squires-menu
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
         @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+      />
+      <deposit-fief-menu
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-click-inventory-item="handleClickInventoryItem"
+      />
+      <deposit-items-menu
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-click-inventory-item="handleClickInventoryItem"
       />
       <squires-menus
         :squires-menu-active-status="state.squiresMenuActiveStatus"

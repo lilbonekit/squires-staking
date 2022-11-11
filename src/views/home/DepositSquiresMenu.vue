@@ -11,7 +11,7 @@ const props = defineProps({
 const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active-status'])
 
 const state = reactive({
-  loadingMenuDescription: 'Loading Squires',
+  loadingMenuDescription: 'Loading Squires to Deposit',
   currentMenuActiveStatus: '',
   selectedSquiresId: [],
 })
@@ -26,9 +26,9 @@ const menuDescription = computed(() =>
 )
 
 watch(menuActiveStatus, (newStatus, oldStatus) => {
-  if (newStatus === 'deposit') {
+  if (newStatus === 'deposit/squires') {
     state.currentMenuActiveStatus = oldStatus
-    setTimeout(async () => {
+    setTimeout(() => {
       state.loadingMenuDescription = 'Loading Squires to Deposit'
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresToDeposit')
@@ -38,10 +38,10 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
 
 const isSelected = id => (state.selectedSquiresId.filter(squireId => squireId === id).length > 0 ? true : false)
 
-const handleClickRefresh = async () => {
+const handleClickRefresh = () => {
   state.loadingMenuDescription = 'Loading Squires to Deposit'
   state.selectedSquiresId = []
-  await store.dispatch('squires/getSquiresToDeposit')
+  store.dispatch('squires/getSquiresToDeposit')
 }
 
 const handleSelectSquire = id => {
@@ -50,26 +50,22 @@ const handleSelectSquire = id => {
 }
 
 const handleClickDepositFew = async () => {
-  if (state.selectedSquiresId.length > 0) {
-    state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
-    await store.dispatch('squires/depositSquires', state.selectedSquiresId)
-    state.selectedSquiresId = []
-  }
+  state.loadingMenuDescription = 'Depositing Few Squires and Prompting Metamask'
+  await store.dispatch('squires/depositSquires', state.selectedSquiresId)
+  state.selectedSquiresId = []
 }
 
 const handleClickDepositAll = async () => {
-  if (store.state.squires.squiresToDeposit.length > 0) {
-    state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
-    const selectedSquiresId = store.state.squires.squiresToDeposit.map(squire => squire.id)
-    await store.dispatch('squires/depositSquires', selectedSquiresId)
-    state.selectedSquiresId = []
-  }
+  state.loadingMenuDescription = 'Depositing All Squires and Prompting Metamask'
+  const selectedSquiresId = store.state.squires.squiresToDeposit.map(squire => squire.id)
+  await store.dispatch('squires/depositSquires', selectedSquiresId)
+  state.selectedSquiresId = []
 }
 </script>
 
 <template>
   <!-- deposit -->
-  <div class="menu quest-menu" :class="{ 'menu-active': squiresMenuActiveStatus === 'deposit' }">
+  <div class="menu quest-menu" :class="{ 'menu-active': squiresMenuActiveStatus === 'deposit/squires' }">
     <header class="menu-header">
       <button class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <div class="menu-label">Deposit Squires</div>
@@ -85,8 +81,17 @@ const handleClickDepositAll = async () => {
           {{ menuDescription }}
         </template>
       </p>
-      <button class="btn" @click="() => emit('handle-squires-menu-active-status', state.currentMenuActiveStatus)">Check Squires Deposited</button>
-      <button class="btn" @click="() => handleClickRefresh()">Refresh</button>
+      <button
+        class="btn"
+        :class="{ quest: store.state.squires.loading }"
+        :disabled="store.state.squires.loading"
+        @click="() => emit('handle-squires-menu-active-status', state.currentMenuActiveStatus)"
+      >
+        Check Squires Deposited
+      </button>
+      <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="() => handleClickRefresh()">
+        Refresh
+      </button>
     </header>
     <main class="menu-main">
       <div class="content">
@@ -138,7 +143,12 @@ const handleClickDepositAll = async () => {
               ><span>Deposit Squire(s) # {{ state.selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="handleClickDepositAll">
+          <button
+            class="btn"
+            :class="{ quest: store.state.squires.loading || store.state.squires.squiresToDeposit.length === 0 }"
+            :disabled="store.state.squires.loading || store.state.squires.squiresToDeposit.length === 0"
+            @click="handleClickDepositAll"
+          >
             Deposit All
           </button>
         </footer>

@@ -63,14 +63,9 @@ const squiresModule = {
       commit('setSquiresToDeposit', [])
       try {
         const pullGraph = await subgraphService.getSquiresToDepositBySubgraph(rootState.web3.account)
-        const squires = new Array(pullGraph)
-        let squiresToDeposit = squires[0]
-        rootState.items.squires.forEach(depositedSquire => {
-          squiresToDeposit = squiresToDeposit.filter(squire => squire.id !== depositedSquire.tokenId)
-        })
         commit(
           'setSquiresToDeposit',
-          squiresToDeposit.sort((a, b) => a.id - b.id),
+          pullGraph.sort((a, b) => a.id - b.id),
         )
         commit('setLoading', false)
       } catch (error) {
@@ -82,7 +77,7 @@ const squiresModule = {
       commit('setLoading', true)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
       const _contractAddress = new Array(selectedSquiresId.length).fill(koteSquires.address)
-      const _id = selectedSquiresId
+      const _id = selectedSquiresId.map(squireId => Number(squireId))
       const _amount = new Array(selectedSquiresId.length).fill(1)
 
       try {

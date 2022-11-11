@@ -1,16 +1,37 @@
 <script setup>
+import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
+
+const props = defineProps({
+  squiresMenuActiveStatus: String,
+  inventoryItemMenuActiveStatus: String,
+})
+const emit = defineEmits(['handle-squires-menu-active-status', 'handle-click-inventory-item'])
+
+const approved = computed(() => store.state.squires.approved)
+const approvedFief = computed(() => store.state.items.approvedFief)
+const approvedItems = computed(() => store.state.items.approvedItems)
+
+watch(approved, newStatus => {
+  if (newStatus && props.squiresMenuActiveStatus === 'approve/squires') emit('handle-squires-menu-active-status', 'deposit/squires')
+})
+
+watch(approvedFief, newStatus => {
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/fief') emit('handle-click-inventory-item', 'deposit/fief')
+})
+
+watch(approvedItems, (newStatus, oldStatus) => {
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/items') emit('handle-click-inventory-item', `deposit/items/${oldStatus}`)
+})
 </script>
 
 <template>
-  <div class="menu quest-menu" :class="{ 'menu-active': !store.state.squires.approved }" style="z-index: 13">
+  <div class="menu quest-menu" :class="{ 'menu-active': squiresMenuActiveStatus === 'approve/squires' }" style="z-index: 13">
     <header class="menu-header">
-      <div class="menu-label">Squires Approving</div>
-      <!-- <p class="menu-description">Hey! We recently released a new questing contract:<br />Temple!</p> -->
-      <!-- <br /> -->
-      <p class="menu-description">Approve all of the Squires(ERC721) to deposit them into the KoteStorage Bridge Contract</p>
+      <div class="menu-label">Squires Contract Approving</div>
+      <p class="menu-description">Approve the Squires Contract(ERC721) to deposit into the KoteStorage Bridge Contract</p>
       <template v-if="store.state.squires.loading">
         <img
           class="menu-description"
@@ -18,7 +39,7 @@ const store = useStore()
           src="/assets/images/tnet/images/loading.gif"
         />
       </template>
-      <template v-if="!store.state.squires.loading">
+      <template v-else>
         <br />
       </template>
 
@@ -32,32 +53,54 @@ const store = useStore()
       </button>
     </header>
   </div>
-  <!-- <div id="Forest-Menu__Approve" class="menu quest-menu" :class="{ 'menu-active': !store.state.user.approveForest }" style="z-index: 14">
+  <div class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'approve/fief' }" style="z-index: 13">
     <header class="menu-header">
-      <div class="menu-label">Forest Questing</div>
-      <p class="menu-description">Hey! We recently pushed an update to our contracts</p>
-      <p class="menu-description">Approve the Forest Questing Contract To Start Questing</p>
-      <br />
-      <p class="menu-description">After you've aproved, head over to Forest to return squires from the old contract</p>
-      <button class="btn" @click="() => store.dispatch('items/approveForest')">Approve New Forest Contract</button>
+      <div class="menu-label">Fief Contract Approving</div>
+      <p class="menu-description">Approve the Fief Contract(ERC20) to deposit into the KoteStorage Bridge Contract</p>
+      <template v-if="store.state.items.loading">
+        <img
+          class="menu-description"
+          style="width: 20%; display: block; margin-left: auto; margin-right: auto"
+          src="/assets/images/tnet/images/loading.gif"
+        />
+      </template>
+      <template v-else>
+        <br />
+      </template>
+
+      <button
+        class="btn"
+        :class="{ quest: store.state.items.loading }"
+        :disabled="store.state.items.loading"
+        @click="() => store.dispatch('items/approveFiefContract')"
+      >
+        Approve Fief Contract
+      </button>
     </header>
   </div>
-  <div id="Cavern-Menu__Approve" class="menu quest-menu" :class="{ 'menu-active': !store.state.user.approveCavern }" style="z-index: 15">
+  <div class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'approve/items' }" style="z-index: 13">
     <header class="menu-header">
-      <div class="menu-label">Cavern Questing</div>
-      <p class="menu-description">We also released the cavern contract!</p>
-      <p class="menu-description">Approve the Cavern Questing Contract To Start Questing the Cavern</p>
-      <br />
-      <button class="btn" @click="() => store.dispatch('items/approveCavern')">Approve New Cavern Contract</button>
+      <div class="menu-label">Inventory Items Contract Approving</div>
+      <p class="menu-description">Approve the Inventory Items Contract(ERC1155) to deposit into the KoteStorage Bridge Contract</p>
+      <template v-if="store.state.items.loading">
+        <img
+          class="menu-description"
+          style="width: 20%; display: block; margin-left: auto; margin-right: auto"
+          src="/assets/images/tnet/images/loading.gif"
+        />
+      </template>
+      <template v-else>
+        <br />
+      </template>
+
+      <button
+        class="btn"
+        :class="{ quest: store.state.items.loading }"
+        :disabled="store.state.items.loading"
+        @click="() => store.dispatch('items/approveItemsContract')"
+      >
+        Approve Inventory Items Contract
+      </button>
     </header>
   </div>
-  <div id="Mountain-Menu__Approve" class="menu quest-menu" :class="{ 'menu-active': !store.state.user.approveMountain }" style="z-index: 16">
-    <header class="menu-header">
-      <div class="menu-label">Mountain Questing</div>
-      <p class="menu-description">Hey! We recently released new questing contracts</p>
-      <p class="menu-description">Approve the Mountain Questing Contract To Start Questing the Mountain</p>
-      <br />
-      <button class="btn" @click="() => store.dispatch('items/approveMountain')">Approve New Mountain Contract</button>
-    </header>
-  </div> -->
 </template>

@@ -12,7 +12,6 @@ const store = useStore()
 const props = defineProps({
   squiresMenuActiveStatus: String,
 })
-
 const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active-status'])
 
 const state = reactive({

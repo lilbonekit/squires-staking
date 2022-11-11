@@ -1,6 +1,6 @@
 export const itemRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
 
-export const RingItems = [
+export const ringItems = [
   {
     id: 0,
     itemType: 0,
@@ -203,7 +203,7 @@ export const RingItems = [
   },
 ]
 
-export const PotionItems = [
+export const potionItems = [
   {
     id: 0,
     itemType: 1,
@@ -406,7 +406,7 @@ export const PotionItems = [
   },
 ]
 
-export const TrinketItems = [
+export const trinketItems = [
   {
     id: 0,
     itemType: 2,

@@ -50,7 +50,7 @@ export const getSquireTotal = squires => {
     if (squire.quest !== 'None') squireTotalQuesting += 1
     else squireTotalTown += 1
   })
-  return { squires: squires, squireTotal, squireTotalQuesting, squireTotalTown }
+  return { squires, squireTotal, squireTotalQuesting, squireTotalTown }
 }
 
 export const getInventoryItemsTotal = (items, rootState) => {

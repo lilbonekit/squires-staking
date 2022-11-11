@@ -16,16 +16,21 @@ const socketModule = {
         const socketInstance = socketService.init()
         commit('setSocketInstance', socketInstance)
 
-        socketInstance.on('loggedin', data => {
+        socketInstance.on('loggedin', user => {
           console.log('Login successful')
-          console.log(data)
+          console.log(user)
 
-          let f = rootState.web3.library.utils.fromWei(data.fief, 'ether')
+          let f = rootState.web3.library.utils.fromWei(user.fief, 'ether')
           f = Number(f).toFixed(2)
           f = parseFloat(f)
 
           commit('items/setFiefTotal', f, { root: true })
           commit('web3/setLoggedIn', true, { root: true })
+          console.log('setFiefTotal:', f)
+        })
+
+        socketInstance.on('loginfail', response => {
+          console.log(response)
         })
 
         socketInstance.on('squires', response => {
@@ -63,7 +68,7 @@ const socketModule = {
         })
 
         socketInstance.on('items', response => {
-          if (response) {
+          if (response.success) {
             const items = response.items
             commit('items/setInventoryItems', items, { root: true })
             console.log('inventoryItems:', items)
@@ -75,6 +80,31 @@ const socketModule = {
           }
         })
 
+        socketInstance.on('deposit', response => {
+          if (response.success) {
+            const squires = response.squires
+            const squireTotal = socketService.getSquireTotal(squires)
+            commit('items/setSquireTotal', squireTotal, { root: true })
+            console.log('setSquireTotal:', squireTotal)
+            const items = response.items
+            console.log('inventoryItems:', items)
+            const inventoryItems = socketService.getInventoryItemsTotal(items, rootState)
+            commit('items/setPotionTotal', inventoryItems[0], { root: true })
+            commit('items/setRingTotal', inventoryItems[1], { root: true })
+            commit('items/setTrinketTotal', inventoryItems[2], { root: true })
+          } else {
+            throw new Error(response.message)
+          }
+        })
+
+        socketInstance.on('depositsuccess', response => {
+          console.log('depositSuccess:', response)
+        })
+
+        socketInstance.on('erc20depositsuccess', response => {
+          console.log('erc20depositSuccess:', response)
+        })
+
         socketInstance.on('show return', questType => {
           commit('squires/setLoading', false, { root: true })
           console.log('questType:', questType)
@@ -82,29 +112,7 @@ const socketModule = {
 
         socketInstance.on('quest data', response => {
           console.log('questData:', response)
-          const questData = response
-          commit('squires/setLoot', questData, { root: true })
-          let { potions, potionTotal, rings, ringTotal, trinkets, trinketTotal } = rootState.items
-          questData.forEach(data => {
-            data.items.forEach(item => {
-              console.log('item:', item)
-              if (item.type === 'potion') {
-                potionTotal += 1
-                potions[item.id - 100] += 1
-                commit('items/setPotionTotal', { potions, potionTotal }, { root: true })
-              }
-              if (item.type === 'trinket') {
-                trinketTotal += 1
-                trinkets[item.id - 100] += 1
-                commit('items/setTrinketTotal', { trinkets, trinketTotal }, { root: true })
-              }
-              if (item.type === 'ring') {
-                ringTotal += 1
-                rings[item.id - 100] += 1
-                commit('items/setRingTotal', { rings, ringTotal }, { root: true })
-              }
-            })
-          })
+          commit('squires/setLoot', response, { root: true })
           commit('squires/setLoading', false, { root: true })
         })
       } catch (error) {

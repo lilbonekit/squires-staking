@@ -27,7 +27,6 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
     let upgradedSquires = []
     let newItems = []
     let fiefSum = 0
-    console.log(store.state.squires.loot)
     store.state.squires.loot.forEach(lootData => {
       if (lootData.upgrades[0] !== 'None') upgradedSquires.push(store.state.items.squires.filter(squire => squire.tokenId === lootData.id)[0])
       if (lootData.items.length > 0) newItems.push(store.state.items.inventoryItems.filter(item => item.id === lootData.items[0].id)[0])

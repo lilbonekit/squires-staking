@@ -1,5 +1,8 @@
 <script setup>
+import { useStore } from 'vuex'
 import { squiresType } from '@/config/constants/squiresType'
+
+const store = useStore()
 
 defineProps({
   questType: String,
@@ -20,6 +23,11 @@ const emit = defineEmits([
   'handle-click-send-few',
   'handle-click-send-all',
 ])
+
+const handleClickDeposit = () => {
+  if (store.state.squires.approved) emit('handle-squires-menu-active-status', 'deposit/squires')
+  else emit('handle-squires-menu-active-status', 'approve/squires')
+}
 </script>
 
 <template>
@@ -41,9 +49,7 @@ const emit = defineEmits([
       </p>
       <button class="btn" @click="() => emit('handle-squires-menu-active-status', `${questType}/return`)">Check Squires Ready to Return</button>
       <button class="btn" @click="() => emit('handle-click-refresh')">Refresh</button>
-      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => emit('handle-squires-menu-active-status', 'deposit')">
-        Deposit
-      </button>
+      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="handleClickDeposit">Deposit</button>
     </header>
     <main class="menu-main">
       <div class="content">
