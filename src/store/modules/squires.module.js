@@ -97,22 +97,26 @@ const squiresModule = {
     getSquiresNoneQuesting({ rootState, commit }) {
       commit('setLoading', true)
       commit('setSquiresDeposited', [])
-      const squiresDepositedNQ = rootState.items.squires.filter(squire => squire.quest === 'None')
-      commit(
-        'setSquiresDeposited',
-        squiresDepositedNQ.sort((a, b) => a.tokenId - b.tokenId),
-      )
-      commit('setLoading', false)
+      setTimeout(() => {
+        const squiresDepositedNQ = rootState.items.squires.filter(squire => squire.quest === 'None')
+        commit(
+          'setSquiresDeposited',
+          squiresDepositedNQ.sort((a, b) => a.tokenId - b.tokenId),
+        )
+        commit('setLoading', false)
+      }, 500)
     },
     getSquiresQuesting({ rootState, commit }, questType) {
       commit('setLoading', true)
       commit('setSquiresDeposited', [])
-      const squiresDepositedQ = rootState.items.squires.filter(squire => squire.quest === questType)
-      commit(
-        'setSquiresDeposited',
-        squiresDepositedQ.sort((a, b) => a.tokenId - b.tokenId),
-      )
-      commit('setLoading', false)
+      setTimeout(() => {
+        const squiresDepositedQ = rootState.items.squires.filter(squire => squire.quest === questType)
+        commit(
+          'setSquiresDeposited',
+          squiresDepositedQ.sort((a, b) => a.tokenId - b.tokenId),
+        )
+        commit('setLoading', false)
+      }, 500)
     },
     async startQuest({ rootState, commit }, { questType, selectedSquiresId }) {
       commit('setLoading', true)

@@ -1,7 +1,5 @@
 <script setup>
-import { useStore } from 'vuex'
-
-const store = useStore()
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 
 defineProps({
   showFog: Boolean,
@@ -9,6 +7,40 @@ defineProps({
 })
 
 const emit = defineEmits(['handle-hover-map-region', 'handle-click-label', 'handle-click-about'])
+
+const audioRef = ref(new Audio('/assets/audio/atmo2_1.mp3'))
+
+const state = reactive({
+  audioToggle: true,
+})
+
+const playAudio = () => {
+  audioRef.value.play()
+  audioRef.value.loop = true
+}
+
+const stopAudio = () => {
+  audioRef.value.pause()
+  audioRef.value.loop = false
+}
+
+const toggleAudio = audioToggle => {
+  if (audioToggle) {
+    stopAudio()
+    state.audioToggle = false
+  } else {
+    playAudio()
+    state.audioToggle = true
+  }
+}
+
+onMounted(() => {
+  playAudio()
+})
+
+onUnmounted(() => {
+  stopAudio()
+})
 </script>
 
 <template>
@@ -130,9 +162,8 @@ const emit = defineEmits(['handle-hover-map-region', 'handle-click-label', 'hand
     </div>
 
     <div class="Audio-Toggle-Name"><i>Music by Premes</i></div>
-    <button id="Audio-Toggle" onclick="play()">
+    <button id="Audio-Toggle" :class="{ off: state.audioToggle === false }" @click="() => toggleAudio(state.audioToggle)">
       <img src="/assets/images/beta/i/kote-icon-sound.png" />
     </button>
-    <audio id="Audio-Play" autoplay loop src="/assets/audio/atmo2_1.mp3"></audio>
   </div>
 </template>

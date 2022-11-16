@@ -47,9 +47,24 @@ const handleClickDeposit = () => {
           {{ sendMenuDescription }}
         </template>
       </p>
-      <button class="btn" @click="() => emit('handle-squires-menu-active-status', `${questType}/return`)">Check Squires Ready to Return</button>
-      <button class="btn" @click="() => emit('handle-click-refresh')">Refresh</button>
-      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="handleClickDeposit">Deposit</button>
+      <button
+        class="btn"
+        :class="{ quest: loading }"
+        :disabled="loading"
+        @click="() => emit('handle-squires-menu-active-status', `${questType}/return`)"
+      >
+        Check Squires Ready to Return
+      </button>
+      <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-refresh')">Refresh</button>
+      <button
+        style="position: absolute; top: 40px; left: 10px"
+        class="btn"
+        :class="{ quest: loading }"
+        :disabled="loading"
+        @click="handleClickDeposit"
+      >
+        Deposit
+      </button>
     </header>
     <main class="menu-main">
       <div class="content">
@@ -96,7 +111,12 @@ const handleClickDeposit = () => {
               ><span>Send Squire(s) # {{ selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-send-all', questType)">
+          <button
+            class="btn"
+            :class="{ quest: loading || squiresDeposited.length === 0 }"
+            :disabled="loading || squiresDeposited.length === 0"
+            @click="() => emit('handle-click-send-all', questType)"
+          >
             Send All
           </button>
         </footer>

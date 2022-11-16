@@ -41,13 +41,16 @@ const emit = defineEmits([
           {{ returnMenuDescription }}
         </template>
       </p>
-      <button id="Forest-quest" class="btn" @click="() => emit('handle-squires-menu-active-status', `${questType}/send`)">
+      <button
+        class="btn"
+        :class="{ quest: loading }"
+        :disabled="loading"
+        @click="() => emit('handle-squires-menu-active-status', `${questType}/send`)"
+      >
         Check Squires Ready to Quest
       </button>
-      <p id="Forest-message" class="menu-description" style="color: grey; text-size: 20px">
-        *If you can't see your squires, hit <i>refresh</i> below
-      </p>
-      <button class="btn" @click="() => emit('handle-click-refresh', questType)">Refresh</button>
+      <p class="menu-description" style="color: grey; text-size: 20px">*If you can't see your squires, hit <i>refresh</i> below</p>
+      <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-refresh', questType)">Refresh</button>
     </header>
     <main class="menu-main">
       <div class="content">
@@ -78,8 +81,7 @@ const emit = defineEmits([
               </ul>
               <button class="btn quest" v-if="squire.finish - timeNow > 0">
                 <span class="token-number"
-                  >#{{ squire.tokenId }} is still questing:
-                  <span> {{ new Date((squire.finish - timeNow) * 1000).toISOString().substring(11, 8) }} </span></span
+                  >#{{ squire.tokenId }} is still questing: <span> {{ squire.finish - timeNow }}s left. </span></span
                 >
               </button>
               <button class="btn quest" @click="() => emit('handle-select-squire', squire.tokenId)" v-else>
@@ -100,12 +102,22 @@ const emit = defineEmits([
               ><span>Return Squire(s) # {{ selectedSquiresId.toString() }}</span></span
             >
           </button>
-          <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-return-all', questType)">
+          <button
+            class="btn"
+            :class="{ quest: loading || squiresDeposited.length === 0 }"
+            :disabled="loading || squiresDeposited.length === 0"
+            @click="() => emit('handle-click-return-all', questType)"
+          >
             Return All
           </button>
         </footer>
         <footer class="menu-controls">
-          <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-return-all-and-restart', questType)">
+          <button
+            class="btn"
+            :class="{ quest: loading || squiresDeposited.length === 0 }"
+            :disabled="loading || squiresDeposited.length === 0"
+            @click="() => emit('handle-click-return-all-and-restart', questType)"
+          >
             Return All and Restart Quest
           </button>
         </footer>

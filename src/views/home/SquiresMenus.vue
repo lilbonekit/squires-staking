@@ -55,9 +55,7 @@ watch(menuActiveStatus, newStatus => {
 })
 
 watch(lootData, newData => {
-  if (newData.length > 0) {
-    emit('handle-squires-menu-active-status', 'loot')
-  }
+  emit('handle-squires-menu-active-status', 'loot')
 })
 
 const isSelected = id => (state.selectedSquiresId.filter(squireId => squireId === id).length > 0 ? true : false)
@@ -81,51 +79,48 @@ const handleSelectSquire = id => {
 }
 
 const handleClickSendFew = async questType => {
-  if (state.selectedSquiresId.length > 0) {
-    state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
-    await store.dispatch('squires/startQuest', { questType, selectedSquiresId: state.selectedSquiresId })
-    state.selectedSquiresId = []
-  }
+  state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  await store.dispatch('squires/startQuest', { questType, selectedSquiresId: state.selectedSquiresId })
+  state.selectedSquiresId = []
 }
 
 const handleClickSendAll = async questType => {
-  if (store.state.squires.squiresDeposited.length > 0) {
-    state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
-    const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
-    await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
-    state.selectedSquiresId = []
-  }
+  state.loadingMenuDescription = `Sending Squires to the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
+  state.selectedSquiresId = []
 }
 
 const handleClickReturnFew = async questType => {
-  if (state.selectedSquiresId.length > 0) {
-    state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
-    store.commit('squires/setIsRestart', false)
-    await store.dispatch('squires/finishQuest', { questType, selectedSquiresId: state.selectedSquiresId })
-    state.selectedSquiresId = []
-  }
+  state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  store.commit('squires/setIsRestart', false)
+  await store.dispatch('squires/finishQuest', { questType, selectedSquiresId: state.selectedSquiresId })
+  state.selectedSquiresId = []
+}
+
+const checkStillQuesting = () => {
+  const stillQuestingSquires = store.state.squires.squiresDeposited.filter(squire => squire.finish - state.timeNow > 0)
+  return stillQuestingSquires.length > 0 ? true : false
 }
 
 const handleClickReturnAll = async questType => {
-  if (store.state.squires.squiresDeposited.length > 0) {
-    state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
-    store.commit('squires/setIsRestart', false)
-    const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
-    await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
-    state.selectedSquiresId = []
-  }
+  if (checkStillQuesting() === true) return
+  state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  store.commit('squires/setIsRestart', false)
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
+  state.selectedSquiresId = []
 }
 
 const handleClickReturnAllandRestart = async questType => {
-  if (store.state.squires.squiresDeposited.length > 0) {
-    state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
-    store.commit('squires/setIsRestart', true)
-    const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
-    await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
-    await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
-    store.dispatch('squires/getSquiresQuesting', questType)
-    state.selectedSquiresId = []
-  }
+  if (checkStillQuesting() === true) return
+  state.loadingMenuDescription = `Returning Squires and Gathering Rewards from the ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
+  store.commit('squires/setIsRestart', true)
+  const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
+  await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
+  await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
+  store.dispatch('squires/getSquiresQuesting', questType)
+  state.selectedSquiresId = []
 }
 </script>
 

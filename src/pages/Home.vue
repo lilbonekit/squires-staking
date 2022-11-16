@@ -139,7 +139,9 @@ onMounted(async () => {
   try {
     if (store.state.socket.socketInstance && store.state.web3.active === true) {
       await store.dispatch('items/getApprovedFief')
-      await store.dispatch('items/getApprovedItems')
+      await store.dispatch('items/getApprovedPotions')
+      await store.dispatch('items/getApprovedTrinkets')
+      await store.dispatch('items/getApprovedRings')
       await store.dispatch('squires/getApproved')
       await store.dispatch('socket/getSquires')
       await store.dispatch('socket/getInventoryItems')

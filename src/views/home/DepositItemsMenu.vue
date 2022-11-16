@@ -51,13 +51,13 @@ const handleSelectItem = (id, amount) => {
 }
 
 const handleClickDepositFew = async () => {
-  state.loadingMenuDescription = `Depositing Few ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
+  state.loadingMenuDescription = `Depositing ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
   await store.dispatch('items/depositItems', { selectedItems: state.selectedItems, itemType: state.itemType })
   state.selectedItems = []
 }
 
 const handleClickDepositAll = async () => {
-  state.loadingMenuDescription = `Depositing All ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
+  state.loadingMenuDescription = `Depositing ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
   const selectedItems = store.state.items.itemsToDeposit.map(item => Object.assign({ id: item.id, amount: item.amount }))
   await store.dispatch('items/depositItems', { selectedItems, itemType: state.itemType })
   state.selectedItems = []
@@ -91,7 +91,7 @@ const handleClickDepositAll = async () => {
         :disabled="store.state.items.loading"
         @click="() => emit('handle-click-inventory-item', state.itemType)"
       >
-        Check {{ state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1) }}s Deposited
+        Check Deposited {{ state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1) }}s
       </button>
       <button class="btn" :class="{ quest: store.state.items.loading }" :disabled="store.state.items.loading" @click="() => handleClickRefresh()">
         Refresh

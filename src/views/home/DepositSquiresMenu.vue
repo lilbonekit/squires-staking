@@ -50,13 +50,13 @@ const handleSelectSquire = id => {
 }
 
 const handleClickDepositFew = async () => {
-  state.loadingMenuDescription = 'Depositing Few Squires and Prompting Metamask'
+  state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
   await store.dispatch('squires/depositSquires', state.selectedSquiresId)
   state.selectedSquiresId = []
 }
 
 const handleClickDepositAll = async () => {
-  state.loadingMenuDescription = 'Depositing All Squires and Prompting Metamask'
+  state.loadingMenuDescription = 'Depositing Squires and Prompting Metamask'
   const selectedSquiresId = store.state.squires.squiresToDeposit.map(squire => squire.id)
   await store.dispatch('squires/depositSquires', selectedSquiresId)
   state.selectedSquiresId = []
@@ -87,7 +87,7 @@ const handleClickDepositAll = async () => {
         :disabled="store.state.squires.loading"
         @click="() => emit('handle-squires-menu-active-status', state.currentMenuActiveStatus)"
       >
-        Check Squires Deposited
+        Check Deposited Squires
       </button>
       <button class="btn" :class="{ quest: store.state.squires.loading }" :disabled="store.state.squires.loading" @click="() => handleClickRefresh()">
         Refresh

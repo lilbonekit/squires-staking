@@ -74,8 +74,9 @@ const handleClickDepositFief = () => {
 }
 
 const handleClickDepositItems = itemType => {
-  if (store.state.items.approvedItems) emit('handle-click-inventory-item', `deposit/items/${itemType}`)
-  else emit('handle-click-inventory-item', 'approve/items')
+  if (store.state.items[`approved${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s`])
+    emit('handle-click-inventory-item', `deposit/items/${itemType}`)
+  else emit('handle-click-inventory-item', `approve/${itemType}s`)
 }
 </script>
 

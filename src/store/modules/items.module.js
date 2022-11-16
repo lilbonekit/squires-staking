@@ -8,7 +8,9 @@ const itemsModule = {
   state: {
     loading: false,
     approvedFief: false,
-    approvedItems: false,
+    approvedPotions: false,
+    approvedTrinkets: false,
+    approvedRings: false,
     fiefToDeposit: 0,
     itemsToDeposit: [],
     fiefTotal: 0,
@@ -32,8 +34,14 @@ const itemsModule = {
     setApprovedFief(state, status) {
       state.approvedFief = status
     },
-    setApprovedItems(state, status) {
-      state.approvedItems = status
+    setApprovedPotions(state, status) {
+      state.approvedPotions = status
+    },
+    setApprovedTrinkets(state, status) {
+      state.approvedTrinkets = status
+    },
+    setApprovedRings(state, status) {
+      state.approvedRings = status
     },
     setItemsToDeposit(state, payload) {
       state.itemsToDeposit = payload
@@ -100,7 +108,7 @@ const itemsModule = {
       commit('setFiefToDeposit', 0)
       try {
         const pullGraph = await subgraphService.getFiefToDepositBySubgraph(rootState.web3.account)
-        let fiefToDeposit = rootState.web3.library.utils.fromWei(pullGraph.amount, 'ether')
+        let fiefToDeposit = pullGraph ? rootState.web3.library.utils.fromWei(pullGraph.amount, 'ether') : 0
         fiefToDeposit = Number(fiefToDeposit).toFixed(2)
         fiefToDeposit = parseFloat(fiefToDeposit)
         commit('setFiefToDeposit', fiefToDeposit)
@@ -128,32 +136,69 @@ const itemsModule = {
         commit('setLoading', false)
       }
     },
-    async getApprovedItems({ rootState, commit }) {
+    async getApprovedPotions({ rootState, commit }) {
       try {
-        const potionContract = getContract(rootState.web3.library, squirePotions.abi, squirePotions.address)
-        const ringContract = getContract(rootState.web3.library, squireRings.abi, squireRings.address)
-        const trinketContract = getContract(rootState.web3.library, squireTrinkets.abi, squireTrinkets.address)
-        const approvedStatusPortion = await potionContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
-        const approvedStatusring = await ringContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
-        const approvedStatusTrinket = await trinketContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
-        const approvedItems = approvedStatusPortion && approvedStatusring && approvedStatusTrinket
-        commit('setApprovedItems', approvedItems)
-        console.log('setApprovedItems:', approvedItems)
+        const potionsContract = getContract(rootState.web3.library, squirePotions.abi, squirePotions.address)
+        const approvedStatus = await potionsContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
+        commit('setApprovedPotions', approvedStatus)
+        console.log('setApprovedPotions:', approvedStatus)
       } catch (error) {
         console.log(error)
       }
     },
-    async approveItemsContract({ rootState, commit }) {
+    async getApprovedTrinkets({ rootState, commit }) {
+      try {
+        const trinketsContract = getContract(rootState.web3.library, squireTrinkets.abi, squireTrinkets.address)
+        const approvedStatus = await trinketsContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
+        commit('setApprovedTrinkets', approvedStatus)
+        console.log('setApprovedTrinkets:', approvedStatus)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getApprovedRings({ rootState, commit }) {
+      try {
+        const ringsContract = getContract(rootState.web3.library, squireRings.abi, squireRings.address)
+        const approvedStatusPortion = await ringsContract.methods.isApprovedForAll(rootState.web3.account, koteStorage.address).call()
+        commit('setApprovedRings', approvedStatusPortion)
+        console.log('setApprovedRings:', approvedStatusPortion)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async approvePotionsContract({ rootState, commit }) {
       commit('setLoading', true)
       try {
-        const potionContract = getContract(rootState.web3.library, squirePotions.abi, squirePotions.address)
-        const ringContract = getContract(rootState.web3.library, squireRings.abi, squireRings.address)
-        const trinketContract = getContract(rootState.web3.library, squireTrinkets.abi, squireTrinkets.address)
-        await potionContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
-        await ringContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
-        await trinketContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
-        commit('setApprovedItems', true)
-        console.log('setApprovedItems:', true)
+        const potionsContract = getContract(rootState.web3.library, squirePotions.abi, squirePotions.address)
+        await potionsContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
+        commit('setApprovedPotions', true)
+        console.log('setApprovedPotions:', true)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+      }
+    },
+    async approveTrinketsContract({ rootState, commit }) {
+      commit('setLoading', true)
+      try {
+        const trinketsContract = getContract(rootState.web3.library, squireTrinkets.abi, squireTrinkets.address)
+        await trinketsContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
+        commit('setApprovedTrinkets', true)
+        console.log('setApprovedTrinkets:', true)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+      }
+    },
+    async approveRingsContract({ rootState, commit }) {
+      commit('setLoading', true)
+      try {
+        const ringsContract = getContract(rootState.web3.library, squireRings.abi, squireRings.address)
+        await ringsContract.methods.setApprovalForAll(koteStorage.address, true).send({ from: rootState.web3.account })
+        commit('setApprovedRings', true)
+        console.log('setApprovedRings:', true)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
