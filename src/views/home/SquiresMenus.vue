@@ -17,7 +17,7 @@ const emit = defineEmits(['handle-click-close-menu', 'handle-squires-menu-active
 const state = reactive({
   selectedSquiresId: [],
   loadingMenuDescription: 'Loading Squires',
-  timeNow: Math.floor(Date.now() / 1000),
+  timeNow: Math.floor(Date.now() / 1000) - 20,
 })
 
 const menuActiveStatus = computed(() => props.squiresMenuActiveStatus)
@@ -49,7 +49,7 @@ watch(menuActiveStatus, newStatus => {
       state.loadingMenuDescription = `Loading Questing Squires in ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresQuesting', questType)
-      state.timeNow = Math.floor(Date.now() / 1000)
+      state.timeNow = Math.floor(Date.now() / 1000) - 20
     }, 750)
   }
 })
@@ -70,7 +70,7 @@ const handleClickRefreshQ = questType => {
   state.loadingMenuDescription = `Loading Questing Squires in ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
   state.selectedSquiresId = []
   store.dispatch('squires/getSquiresQuesting', questType)
-  state.timeNow = Math.floor(Date.now() / 1000)
+  state.timeNow = Math.floor(Date.now() / 1000) - 20
 }
 
 const handleSelectSquire = id => {
