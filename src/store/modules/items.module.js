@@ -86,6 +86,7 @@ const itemsModule = {
         console.log('setApprovedFief:', approvedAmount > 0 ? true : false)
       } catch (error) {
         console.log(error)
+        throw new Error(error)
       }
     },
     async approveFiefContract({ rootState, commit }) {
@@ -144,6 +145,7 @@ const itemsModule = {
         console.log('setApprovedPotions:', approvedStatus)
       } catch (error) {
         console.log(error)
+        throw new Error(error)
       }
     },
     async getApprovedTrinkets({ rootState, commit }) {
@@ -154,6 +156,7 @@ const itemsModule = {
         console.log('setApprovedTrinkets:', approvedStatus)
       } catch (error) {
         console.log(error)
+        throw new Error(error)
       }
     },
     async getApprovedRings({ rootState, commit }) {
@@ -164,6 +167,7 @@ const itemsModule = {
         console.log('setApprovedRings:', approvedStatusPortion)
       } catch (error) {
         console.log(error)
+        throw new Error(error)
       }
     },
     async approvePotionsContract({ rootState, commit }) {
@@ -231,7 +235,6 @@ const itemsModule = {
       }
     },
     async depositItems({ rootState, state, commit }, { selectedItems, itemType }) {
-      console.log('selectedItems:', selectedItems)
       commit('setLoading', true)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
       const contractAddressByItemType = { potion: squirePotions.address, ring: squireRings.address, trinket: squireTrinkets.address }

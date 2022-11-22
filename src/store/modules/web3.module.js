@@ -60,7 +60,7 @@ const web3Module = {
         //       params: [networkParams[parseInt(42161)]],
         //     })
         //   } catch (error) {
-        //     throw new Error(error)
+        //     console.log(error)
         //   }
         // }
         commit('setActive', true)
@@ -89,7 +89,7 @@ const web3Module = {
       try {
         await state.web3Modal.clearCachedProvider()
       } catch (error) {
-        throw new Error(error)
+        console.log(error)
       }
       commit('setAccount', null)
       commit('setActive', false)

@@ -69,7 +69,7 @@ const handleClickCloseMenu = () => {
           </p>
           <br />
           <div class="menu-label">
-            $FIEF (<span>Counting: {{ state.fiefSum }}</span
+            $FIEF (<span>{{ state.fiefSum }}</span
             >)
           </div>
           <p class="menu-description">

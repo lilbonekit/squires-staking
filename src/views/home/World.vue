@@ -59,7 +59,7 @@ onUnmounted(() => {
           class="btn"
           @mouseenter="() => emit('handle-hover-map-region', 'town')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="() => emit('handle-click-label', 'town/send')"
+          @click="() => emit('handle-click-label', 'town')"
         >
           Town
         </button>
@@ -68,7 +68,7 @@ onUnmounted(() => {
           class="btn"
           @mouseenter="() => emit('handle-hover-map-region', 'jeweler')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="() => emit('handle-click-label', 'jeweler/send')"
+          @click="() => emit('handle-click-label', 'jeweler')"
         >
           Jeweler
         </button>
@@ -77,7 +77,7 @@ onUnmounted(() => {
           class="btn"
           @mouseenter="() => emit('handle-hover-map-region', 'blacksmith')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="() => emit('handle-click-label', 'blacksmith/send')"
+          @click="() => emit('handle-click-label', 'blacksmith')"
         >
           Blacksmith
         </button>
@@ -86,7 +86,7 @@ onUnmounted(() => {
           class="btn"
           @mouseenter="() => emit('handle-hover-map-region', 'alchemist')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="() => emit('handle-click-label', 'alchemist/send')"
+          @click="() => emit('handle-click-label', 'alchemist')"
         >
           Alchemist
         </button>

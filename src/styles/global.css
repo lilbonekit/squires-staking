@@ -497,7 +497,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .menu-main {

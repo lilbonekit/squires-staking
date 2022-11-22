@@ -8,7 +8,7 @@ const props = defineProps({
   squiresMenuActiveStatus: String,
   inventoryItemMenuActiveStatus: String,
 })
-const emit = defineEmits(['handle-squires-menu-active-status', 'handle-click-inventory-item'])
+const emit = defineEmits(['handle-click-close-menu'])
 
 const approved = computed(() => store.state.squires.approved)
 const approvedFief = computed(() => store.state.items.approvedFief)
@@ -17,19 +17,19 @@ const approvedTrinkets = computed(() => store.state.items.approvedTrinkets)
 const approvedRings = computed(() => store.state.items.approvedRings)
 
 watch(approved, newStatus => {
-  if (newStatus && props.squiresMenuActiveStatus === 'approve/squires') emit('handle-squires-menu-active-status', 'deposit/squires')
+  if (newStatus && props.squiresMenuActiveStatus === 'approve/squires') emit('handle-click-close-menu')
 })
 watch(approvedFief, newStatus => {
-  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/fief') emit('handle-click-inventory-item', 'deposit/fief')
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/fief') emit('handle-click-close-menu')
 })
 watch(approvedPotions, newStatus => {
-  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/potions') emit('handle-click-inventory-item', `deposit/items/potion`)
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/potions') emit('handle-click-close-menu')
 })
 watch(approvedTrinkets, newStatus => {
-  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/trinkets') emit('handle-click-inventory-item', `deposit/items/trinket`)
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/trinkets') emit('handle-click-close-menu')
 })
 watch(approvedRings, newStatus => {
-  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/rings') emit('handle-click-inventory-item', `deposit/items/ring`)
+  if (newStatus && props.inventoryItemMenuActiveStatus === 'approve/rings') emit('handle-click-close-menu')
 })
 </script>
 

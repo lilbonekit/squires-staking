@@ -11,7 +11,7 @@ const socketModule = {
     },
   },
   actions: {
-    async initializeSocketInstance({ commit, rootState }) {
+    async initializeSocketInstance({ rootState, commit, dispatch }) {
       try {
         const socketInstance = socketService.init()
         commit('setSocketInstance', socketInstance)
@@ -40,7 +40,7 @@ const socketModule = {
             commit('items/setSquireTotal', squireTotal, { root: true })
             console.log('setSquireTotal:', squireTotal)
           } else {
-            throw new Error(response.message)
+            console.log(response.message)
           }
         })
 
@@ -77,6 +77,8 @@ const socketModule = {
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
             commit('setHomePageLoading', false, { root: true })
+          } else {
+            console.log(response.message)
           }
         })
 
@@ -93,7 +95,7 @@ const socketModule = {
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
           } else {
-            throw new Error(response.message)
+            console.log(response.message)
           }
         })
 
@@ -115,8 +117,12 @@ const socketModule = {
           commit('squires/setLoot', response, { root: true })
           commit('squires/setLoading', false, { root: true })
         })
+
+        socketInstance.on('withdraworders', response => {
+          console.log(response.squires)
+          dispatch('squires/withdrawSquires', response.squires, { root: true })
+        })
       } catch (error) {
-        commit('squires/setLoading', false, { root: true })
         throw new Error(error)
       }
     },

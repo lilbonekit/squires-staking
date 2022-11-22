@@ -1018,7 +1018,7 @@ export const koteSquires = {
 }
 
 export const koteStorage = {
-  address: '0x71f81a3F3384918E988a68E5588aFFe1D2b30552',
+  address: '0xB38D38519D852B377a1C34000B536061df8e593b',
   abi: [
     {
       anonymous: false,
@@ -1097,6 +1097,17 @@ export const koteStorage = {
       type: 'function',
     },
     { inputs: [], name: 'init', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+    {
+      inputs: [
+        { internalType: 'bool', name: 'ERC721', type: 'bool' },
+        { internalType: 'uint256', name: 'nonce', type: 'uint256' },
+        { internalType: 'address', name: 'user', type: 'address' },
+      ],
+      name: 'isNonceUsed',
+      outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+      stateMutability: 'view',
+      type: 'function',
+    },
     {
       inputs: [
         { internalType: 'address', name: '', type: 'address' },

@@ -9,6 +9,7 @@ import Menus from '@/views/home/Menus.vue'
 import ApproveMenus from '@/views/home/ApproveMenus.vue'
 import InventoryMenu from '@/views/home/InventoryMenu.vue'
 import DepositSquiresMenu from '@/views/home/DepositSquiresMenu.vue'
+import WithdrawSquiresMenu from '@/views/home/WithdrawSquiresMenu.vue'
 import DepositFiefMenu from '@/views/home/DepositFiefMenu.vue'
 import DepositItemsMenu from '@/views/home/DepositItemsMenu.vue'
 import SquiresMenus from '@/views/home/SquiresMenus.vue'
@@ -178,10 +179,14 @@ onMounted(async () => {
       <approve-menus
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
-        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
-        @handle-click-inventory-item="handleClickInventoryItem"
+        @handle-click-close-menu="handleClickCloseMenu"
       />
       <deposit-squires-menu
+        :squires-menu-active-status="state.squiresMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"
+      />
+      <withdraw-squires-menu
         :squires-menu-active-status="state.squiresMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
         @handle-squires-menu-active-status="handleSquiresMenuActiveStatus"

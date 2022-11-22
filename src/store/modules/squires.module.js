@@ -10,6 +10,7 @@ const squiresModule = {
     loading: false,
     squiresDeposited: [],
     squiresToDeposit: [],
+    squiresIdToWithdraw: [],
     loot: [],
     isRestart: false,
   },
@@ -27,6 +28,9 @@ const squiresModule = {
     setSquiresToDeposit(state, payload) {
       state.squiresToDeposit = payload
     },
+    setSquiresIdToWithdraw(state, payload) {
+      state.squiresIdToWithdraw = payload
+    },
     setLoot(state, payload) {
       state.loot = payload
     },
@@ -43,6 +47,7 @@ const squiresModule = {
         console.log('setApproved:', approvedStatus)
       } catch (error) {
         console.log(error)
+        throw new Error(error)
       }
     },
     async approveSquiresContract({ rootState, commit }) {
@@ -147,6 +152,50 @@ const squiresModule = {
           'setSquiresDeposited',
           squiresDepositedQuesting.sort((a, b) => a.tokenId - b.tokenId),
         )
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+      }
+    },
+    requestWithdrawOrders({ rootState, state, commit }) {
+      commit('setLoading', true)
+      try {
+        socketService.requestWithdrawOrders(rootState.socket.socketInstance)
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+      }
+    },
+    async withdrawSquires({ rootState, state, commit }, withdrawOrders) {
+      let squiresToWithdraw = []
+      state.squiresIdToWithdraw.forEach(squireId => {
+        withdrawOrders.forEach(squireToWithdraw => {
+          if (squireToWithdraw.squire.tokenId === squireId)
+            squiresToWithdraw.push(Object.assign({ ...squireToWithdraw.squire }, { signature: squireToWithdraw.signature }))
+        })
+      })
+      console.log('squiresToWithdraw:', squiresToWithdraw)
+      const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
+      const _id = squiresToWithdraw.map(squire => Number(squire.tokenId))
+      const _strength = squiresToWithdraw.map(squire => squire.strength)
+      const _luck = squiresToWithdraw.map(squire => squire.luck)
+      const _wisdom = squiresToWithdraw.map(squire => squire.wisdom)
+      const _faith = squiresToWithdraw.map(squire => squire.faith)
+      const _nonce = squiresToWithdraw.map(squire => squire.depositednonce)
+      const signature = squiresToWithdraw.map(squire => squire.signature)
+      try {
+        await koteStorageContract.methods
+          .withdrawManySquire(_id, _strength, _luck, _wisdom, _faith, _nonce, signature)
+          .send({ from: rootState.web3.account })
+        let squiresDeposited = state.squiresDeposited
+        state.squiresIdToWithdraw.forEach(squireId => {
+          squiresDeposited = squiresDeposited.filter(squire => squire.tokenId !== squireId)
+        })
+        commit(
+          'setSquiresDeposited',
+          squiresDeposited.sort((a, b) => a.tokenId - b.tokenId),
+        )
+        commit('setLoading', false)
       } catch (error) {
         console.log(error)
         commit('setLoading', false)

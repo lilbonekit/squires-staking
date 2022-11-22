@@ -165,11 +165,12 @@ const handleClickDepositItems = itemType => {
 
   <div id="Inventory-Potion" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'potion' }">
     <header class="menu-header">
-      <div class="menu-label">
+      <div class="menu-label" style="margin-top: -8px">
         Potions: <span id="potionTotal-inventory">{{ store.state.items.potionTotal }}</span>
       </div>
       <button id="Close-Inventory-Potion" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
-      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => handleClickDepositItems('potion')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('potion')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
     </header>
     <main id="Potion-Console" class="menu-main">
       <div class="content">
@@ -193,13 +194,14 @@ const handleClickDepositItems = itemType => {
     </main>
   </div>
 
-  <div class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'ring' }">
+  <div id="Inventory-Ring" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'ring' }">
     <header class="menu-header">
-      <div class="menu-label">
+      <div class="menu-label" style="margin-top: -8px">
         Rings: <span>{{ store.state.items.ringTotal }}</span>
       </div>
       <button class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
-      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => handleClickDepositItems('ring')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('ring')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
     </header>
     <main class="menu-main">
       <div class="content">
@@ -225,11 +227,12 @@ const handleClickDepositItems = itemType => {
 
   <div id="Inventory-Trinket" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'trinket' }">
     <header class="menu-header">
-      <div class="menu-label">
+      <div class="menu-label" style="margin-top: -8px">
         Trinkets: <span id="trinketTotal-inventory">{{ store.state.items.trinketTotal }}</span>
       </div>
       <button id="Close-Inventory-Trinket" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
-      <button style="position: absolute; top: 40px; left: 10px" class="btn" @click="() => handleClickDepositItems('trinket')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('trinket')">Deposit</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
     </header>
     <main id="Trinket-Console" class="menu-main">
       <div class="content">
@@ -256,7 +259,7 @@ const handleClickDepositItems = itemType => {
   <div id="Inventory-Gear" class="menu quest-menu" :class="{ 'menu-active': inventoryItemMenuActiveStatus === 'gear' }">
     <header class="menu-header">
       <button id="Close-Inventory-Gear" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
-      <div class="menu-label">Gear Inventory</div>
+      <div class="menu-label" style="margin-top: -8px">Gear Inventory</div>
       <p class="menu-description">Gear inventory coming with release of Gears!</p>
       <!--<button class ="btn" onclick="sign.approveForest()">Approve Forest</button>-->
       <!--<button class ="btn" onclick="sign.approveMountain()">Approve Mountain</button>-->

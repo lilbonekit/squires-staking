@@ -57,13 +57,22 @@ const handleClickDeposit = () => {
       </button>
       <button class="btn" :class="{ quest: loading }" :disabled="loading" @click="() => emit('handle-click-refresh')">Refresh</button>
       <button
-        style="position: absolute; top: 40px; left: 10px"
+        style="position: absolute; bottom: 20px; left: 20px"
         class="btn"
         :class="{ quest: loading }"
         :disabled="loading"
         @click="handleClickDeposit"
       >
         Deposit
+      </button>
+      <button
+        style="position: absolute; bottom: 20px; right: 20px"
+        class="btn"
+        :class="{ quest: loading }"
+        :disabled="loading"
+        @click="() => emit('handle-squires-menu-active-status', 'withdraw/squires')"
+      >
+        Withdraw
       </button>
     </header>
     <main class="menu-main">
