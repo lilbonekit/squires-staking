@@ -24,6 +24,7 @@ const menuDescription = computed(() =>
     ? 'All squires are currently questing!'
     : 'No squires are deposited',
 )
+const loading = computed(() => store.state.squires.loading)
 
 watch(menuActiveStatus, (newStatus, oldStatus) => {
   if (newStatus === 'withdraw/squires') {
@@ -33,6 +34,12 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
       state.selectedSquiresId = []
       store.dispatch('squires/getSquiresNoneQuesting')
     }, 750)
+  }
+})
+watch(loading, newStatus => {
+  if (!newStatus) {
+    state.selectedSquiresId = []
+    store.commit('squires/setSquiresIdToWithdraw', [])
   }
 })
 
@@ -53,7 +60,6 @@ const handleClickWithdrawFew = () => {
   state.loadingMenuDescription = 'Withdrawing Squires and Prompting Metamask'
   store.commit('squires/setSquiresIdToWithdraw', state.selectedSquiresId)
   store.dispatch('squires/requestWithdrawOrders')
-  state.selectedSquiresId = []
 }
 
 const handleClickWithdrawAll = () => {
@@ -61,7 +67,6 @@ const handleClickWithdrawAll = () => {
   const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
   store.commit('squires/setSquiresIdToWithdraw', selectedSquiresId)
   store.dispatch('squires/requestWithdrawOrders')
-  state.selectedSquiresId = []
 }
 </script>
 

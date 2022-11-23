@@ -167,6 +167,8 @@ const squiresModule = {
       }
     },
     async withdrawSquires({ rootState, state, commit }, withdrawOrders) {
+      console.log('withdraw squires:', withdrawOrders)
+      console.log('selected withdraw squires:', state.squiresIdToWithdraw)
       let squiresToWithdraw = []
       state.squiresIdToWithdraw.forEach(squireId => {
         withdrawOrders.forEach(squireToWithdraw => {
@@ -174,7 +176,6 @@ const squiresModule = {
             squiresToWithdraw.push(Object.assign({ ...squireToWithdraw.squire }, { signature: squireToWithdraw.signature }))
         })
       })
-      console.log('squiresToWithdraw:', squiresToWithdraw)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
       const _id = squiresToWithdraw.map(squire => Number(squire.tokenId))
       const _strength = squiresToWithdraw.map(squire => squire.strength)

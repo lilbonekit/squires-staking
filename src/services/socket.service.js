@@ -77,10 +77,10 @@ export const getSquireTotal = squires => {
   return { squires, squireTotal, squireTotalQuesting, squireTotalTown }
 }
 
-export const getInventoryItemsTotal = (items, rootState) => {
-  let potions = rootState.items.potions
-  let rings = rootState.items.rings
-  let trinkets = rootState.items.trinkets
+export const getInventoryItemsTotal = items => {
+  let potions = new Array(25).fill(0)
+  let rings = new Array(25).fill(0)
+  let trinkets = new Array(27).fill(0)
   let potionTotal = 0
   let ringTotal = 0
   let trinketTotal = 0

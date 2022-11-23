@@ -46,7 +46,7 @@ const socketModule = {
 
         socketInstance.on('update squire', updatedSquire => {
           const squires = rootState.items.squires.map(squire => {
-            if (squire.tokenId == updatedSquire.tokenId) squire = updatedSquire
+            if (squire.tokenId === updatedSquire.tokenId) squire = updatedSquire
             return squire
           })
           const squireTotal = socketService.getSquireTotal(squires)
@@ -72,11 +72,12 @@ const socketModule = {
             const items = response.items
             commit('items/setInventoryItems', items, { root: true })
             console.log('inventoryItems:', items)
-            const inventoryItems = socketService.getInventoryItemsTotal(items, rootState)
+            const inventoryItems = socketService.getInventoryItemsTotal(items)
             commit('items/setPotionTotal', inventoryItems[0], { root: true })
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
             commit('setHomePageLoading', false, { root: true })
+            if (rootState.items.selectedItemsToWithdraw.length > 0) socketService.requestWithdrawOrders(socketInstance)
           } else {
             console.log(response.message)
           }
@@ -89,8 +90,9 @@ const socketModule = {
             commit('items/setSquireTotal', squireTotal, { root: true })
             console.log('setSquireTotal:', squireTotal)
             const items = response.items
+            commit('items/setInventoryItems', items, { root: true })
             console.log('inventoryItems:', items)
-            const inventoryItems = socketService.getInventoryItemsTotal(items, rootState)
+            const inventoryItems = socketService.getInventoryItemsTotal(items)
             commit('items/setPotionTotal', inventoryItems[0], { root: true })
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
@@ -119,8 +121,8 @@ const socketModule = {
         })
 
         socketInstance.on('withdraworders', response => {
-          console.log(response.squires)
-          dispatch('squires/withdrawSquires', response.squires, { root: true })
+          if (rootState.items.selectedItemsToWithdraw.length > 0) dispatch('items/withdrawItems', response.items1155, { root: true })
+          if (rootState.squires.squiresIdToWithdraw.length > 0) dispatch('squires/withdrawSquires', response.squires, { root: true })
         })
       } catch (error) {
         throw new Error(error)

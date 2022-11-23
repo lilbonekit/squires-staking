@@ -78,6 +78,10 @@ const handleClickDepositItems = itemType => {
     emit('handle-click-inventory-item', `deposit/items/${itemType}`)
   else emit('handle-click-inventory-item', `approve/${itemType}s`)
 }
+
+const handleClickWithdrawItems = itemType => {
+  emit('handle-click-inventory-item', `withdraw/items/${itemType}`)
+}
 </script>
 
 <template>
@@ -170,7 +174,7 @@ const handleClickDepositItems = itemType => {
       </div>
       <button id="Close-Inventory-Potion" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('potion')">Deposit</button>
-      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn" @click="() => handleClickWithdrawItems('potion')">Withdraw</button>
     </header>
     <main id="Potion-Console" class="menu-main">
       <div class="content">
@@ -201,7 +205,7 @@ const handleClickDepositItems = itemType => {
       </div>
       <button class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('ring')">Deposit</button>
-      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn" @click="() => handleClickWithdrawItems('ring')">Withdraw</button>
     </header>
     <main class="menu-main">
       <div class="content">
@@ -232,7 +236,7 @@ const handleClickDepositItems = itemType => {
       </div>
       <button id="Close-Inventory-Trinket" class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
       <button style="position: absolute; bottom: 20px; left: 10px" class="btn" @click="() => handleClickDepositItems('trinket')">Deposit</button>
-      <button style="position: absolute; bottom: 20px; right: 10px" class="btn">Withdraw</button>
+      <button style="position: absolute; bottom: 20px; right: 10px" class="btn" @click="() => handleClickWithdrawItems('trinket')">Withdraw</button>
     </header>
     <main id="Trinket-Console" class="menu-main">
       <div class="content">

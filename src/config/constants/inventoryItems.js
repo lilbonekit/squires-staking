@@ -1,4 +1,5 @@
 export const itemRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
+export const classType = ['Northern', 'Dreadmade', 'Hessian', 'Soulforged', 'Ancient']
 
 export const ringItems = [
   {

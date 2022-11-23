@@ -12,6 +12,7 @@ import DepositSquiresMenu from '@/views/home/DepositSquiresMenu.vue'
 import WithdrawSquiresMenu from '@/views/home/WithdrawSquiresMenu.vue'
 import DepositFiefMenu from '@/views/home/DepositFiefMenu.vue'
 import DepositItemsMenu from '@/views/home/DepositItemsMenu.vue'
+import WithdrawItemsMenu from '@/views/home/WithdrawItemsMenu.vue'
 import SquiresMenus from '@/views/home/SquiresMenus.vue'
 import AboutMenus from '@/views/home/AboutMenus.vue'
 import InventoryItemMenus from '@/views/home/InventoryItemMenus.vue'
@@ -197,6 +198,11 @@ onMounted(async () => {
         @handle-click-inventory-item="handleClickInventoryItem"
       />
       <deposit-items-menu
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-click-inventory-item="handleClickInventoryItem"
+      />
+      <withdraw-items-menu
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
         @handle-click-inventory-item="handleClickInventoryItem"
