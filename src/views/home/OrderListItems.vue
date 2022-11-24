@@ -42,7 +42,7 @@ const handleClickWithdrawAll = async () => {
     :class="{ 'menu-active': inventoryItemMenuActiveStatus.slice(0, inventoryItemMenuActiveStatus.lastIndexOf('/')) === 'order/items' }"
   >
     <header class="menu-header">
-      <button class="close-menu" @click="() => emit('handle-click-close-menu')" v-if="store.state.items.itemsOrdered.length > 0"></button>
+      <button class="close-menu" @click="() => emit('handle-click-close-menu')" v-if="store.state.items.itemsOrdered.length === 0"></button>
       <div class="menu-label">Ordered {{ state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1) }}s</div>
       <p class="menu-description">
         <template v-if="store.state.items.loading">

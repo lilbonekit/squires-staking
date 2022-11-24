@@ -140,7 +140,7 @@ const socketModule = {
       }
     },
 
-    getSquires({ state }) {
+    async getSquires({ state }) {
       try {
         socketService.getSquires(state.socketInstance)
       } catch (error) {
@@ -148,7 +148,7 @@ const socketModule = {
       }
     },
 
-    getInventoryItems({ state }) {
+    async getInventoryItems({ state }) {
       try {
         socketService.getInventoryItems(state.socketInstance)
       } catch (error) {
