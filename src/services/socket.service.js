@@ -42,14 +42,14 @@ export const getInventoryItems = socket => {
   socket.emit('get items')
 }
 
-export const requestWithdraw1155 = async (socket, library, selectedAccount, id, amount, type) => {
+export const requestWithdraw1155 = async (socket, library, selectedAccount, ids, amounts, type) => {
   var expiryTime = Math.floor(Date.now() / 1000) + 600
   var action = 'Withdraw'
 
   var hash = 'KOTE\n' + 'Action: ' + action + '\nSignature Expires: ' + expiryTime
   var sig = await library.eth.personal.sign(hash, selectedAccount)
 
-  socket.emit('withdraw item', action, sig, selectedAccount, expiryTime, id, amount, type)
+  socket.emit('withdraw item', action, sig, selectedAccount, expiryTime, ids, amounts, type)
 }
 
 export const requestWithdrawOrders = socket => {

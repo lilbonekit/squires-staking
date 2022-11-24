@@ -76,7 +76,6 @@ const socketModule = {
             commit('items/setPotionTotal', inventoryItems[0], { root: true })
             commit('items/setRingTotal', inventoryItems[1], { root: true })
             commit('items/setTrinketTotal', inventoryItems[2], { root: true })
-            commit('setHomePageLoading', false, { root: true })
             if (rootState.items.selectedItemsToWithdraw.length > 0) socketService.requestWithdrawOrders(socketInstance)
           } else {
             console.log(response.message)
@@ -121,7 +120,11 @@ const socketModule = {
         })
 
         socketInstance.on('withdraworders', response => {
-          if (rootState.items.selectedItemsToWithdraw.length > 0) dispatch('items/withdrawItems', response.items1155, { root: true })
+          if (rootState.items.selectedItemsToWithdraw.length > 0) {
+            console.log('withdraworders:', response)
+            commit('items/setItemsOrdered', response.items1155, { root: true })
+            commit('items/setLoading', false, { root: true })
+          }
           if (rootState.squires.squiresIdToWithdraw.length > 0) dispatch('squires/withdrawSquires', response.squires, { root: true })
         })
       } catch (error) {
@@ -137,7 +140,7 @@ const socketModule = {
       }
     },
 
-    async getSquires({ state }) {
+    getSquires({ state }) {
       try {
         socketService.getSquires(state.socketInstance)
       } catch (error) {
@@ -145,7 +148,7 @@ const socketModule = {
       }
     },
 
-    async getInventoryItems({ state }) {
+    getInventoryItems({ state }) {
       try {
         socketService.getInventoryItems(state.socketInstance)
       } catch (error) {

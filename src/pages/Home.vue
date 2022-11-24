@@ -13,6 +13,7 @@ import WithdrawSquiresMenu from '@/views/home/WithdrawSquiresMenu.vue'
 import DepositFiefMenu from '@/views/home/DepositFiefMenu.vue'
 import DepositItemsMenu from '@/views/home/DepositItemsMenu.vue'
 import WithdrawItemsMenu from '@/views/home/WithdrawItemsMenu.vue'
+import OrderListItems from '@/views/home/OrderListItems.vue'
 import SquiresMenus from '@/views/home/SquiresMenus.vue'
 import AboutMenus from '@/views/home/AboutMenus.vue'
 import InventoryItemMenus from '@/views/home/InventoryItemMenus.vue'
@@ -147,6 +148,7 @@ onMounted(async () => {
       await store.dispatch('squires/getApproved')
       await store.dispatch('socket/getSquires')
       await store.dispatch('socket/getInventoryItems')
+      store.commit('setHomePageLoading', false)
     }
   } catch (error) {
     store.commit('setHomePageLoading', false)
@@ -203,6 +205,11 @@ onMounted(async () => {
         @handle-click-inventory-item="handleClickInventoryItem"
       />
       <withdraw-items-menu
+        :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
+        @handle-click-close-menu="handleClickCloseMenu"
+        @handle-click-inventory-item="handleClickInventoryItem"
+      />
+      <order-list-items
         :inventory-item-menu-active-status="state.inventoryItemMenuActiveStatus"
         @handle-click-close-menu="handleClickCloseMenu"
         @handle-click-inventory-item="handleClickInventoryItem"

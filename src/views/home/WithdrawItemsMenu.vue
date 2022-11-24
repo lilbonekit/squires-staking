@@ -22,30 +22,23 @@ const menuDescription = computed(() =>
     ? `Select the ${state.itemType}s you would like to withdraw`
     : `No ${state.itemType}s are deposited or earned`,
 )
-const loading = computed(() => store.state.items.loading)
 
 watch(menuActiveStatus, newStatus => {
   if (newStatus.slice(0, newStatus.lastIndexOf('/')) === 'withdraw/items') {
     const itemType = newStatus.split('/')[2]
     state.itemType = itemType
     setTimeout(() => {
-      state.loadingMenuDescription = `Loading ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s to Withdraw`
+      state.loadingMenuDescription = `Loading ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s to withdraw`
       state.selectedItems = []
       store.dispatch('items/getItemsToWithdraw', itemType)
     }, 750)
-  }
-})
-watch(loading, newStatus => {
-  if (!newStatus) {
-    state.selectedItems = []
-    store.commit('items/setSelectedItemsToWithdraw', [])
   }
 })
 
 const isSelected = id => (state.selectedItems.filter(item => item.id === id).length > 0 ? true : false)
 
 const handleClickRefresh = () => {
-  state.loadingMenuDescription = `Loading ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to Withdraw`
+  state.loadingMenuDescription = `Loading ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
   state.selectedItems = []
   store.dispatch('items/getItemsToWithdraw', state.itemType)
 }
@@ -55,17 +48,21 @@ const handleSelectItem = (id, amount) => {
   else state.selectedItems.push({ id, amount })
 }
 
-const handleClickWithdrawFew = async () => {
-  state.loadingMenuDescription = `Withdrawing ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
+const handleClickRequestFew = async () => {
+  state.loadingMenuDescription = `Requesting ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
   store.commit('items/setSelectedItemsToWithdraw', state.selectedItems)
   await store.dispatch('items/requestWithdraw1155', state.itemType)
+  state.selectedItems = []
+  emit('handle-click-inventory-item', `order/items/${state.itemType}`)
 }
 
-const handleClickWithdrawAll = async () => {
-  state.loadingMenuDescription = `Withdrawing ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
+const handleClickRequestAll = async () => {
+  state.loadingMenuDescription = `Requesting ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
   const selectedItems = store.state.items.itemsToWithdraw.map(item => Object.assign({ id: item.id, amount: item.amount }))
   store.commit('items/setSelectedItemsToWithdraw', selectedItems)
   await store.dispatch('items/requestWithdraw1155', state.itemType)
+  state.selectedItems = []
+  emit('handle-click-inventory-item', `order/items/${state.itemType}`)
 }
 </script>
 
@@ -128,11 +125,11 @@ const handleClickWithdrawAll = async () => {
             :class="{ quest: store.state.items.loading }"
             :disabled="store.state.items.loading"
             v-if="showWithdrawBtn"
-            @click="handleClickWithdrawFew"
+            @click="handleClickRequestFew"
           >
             <span class="num-selected"
               ><span
-                >Withdraw {{ state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1) }}(s) #
+                >Request to withdraw {{ state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1) }}(s) #
                 {{ state.selectedItems.map(item => item.id - 100).toString() }}</span
               ></span
             >
@@ -141,9 +138,9 @@ const handleClickWithdrawAll = async () => {
             class="btn"
             :class="{ quest: store.state.items.loading || store.state.items.itemsToWithdraw.length === 0 }"
             :disabled="store.state.items.loading || store.state.items.itemsToWithdraw.length === 0"
-            @click="handleClickWithdrawAll"
+            @click="handleClickRequestAll"
           >
-            Withdraw All
+            Request to withdraw All
           </button>
         </footer>
       </div>

@@ -48,8 +48,8 @@ watch(menuActiveStatus, newStatus => {
     setTimeout(() => {
       state.loadingMenuDescription = `Loading Questing Squires in ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
       state.selectedSquiresId = []
-      store.dispatch('squires/getSquiresQuesting', questType)
       state.timeNow = Math.floor(Date.now() / 1000) - 20
+      store.dispatch('squires/getSquiresQuesting', questType)
     }, 750)
   }
 })
@@ -69,8 +69,8 @@ const handleClickRefreshNQ = () => {
 const handleClickRefreshQ = questType => {
   state.loadingMenuDescription = `Loading Questing Squires in ${questType.charAt(0).toUpperCase() + questType.slice(1)}`
   state.selectedSquiresId = []
-  store.dispatch('squires/getSquiresQuesting', questType)
   state.timeNow = Math.floor(Date.now() / 1000) - 20
+  store.dispatch('squires/getSquiresQuesting', questType)
 }
 
 const handleSelectSquire = id => {
@@ -119,7 +119,7 @@ const handleClickReturnAllandRestart = async questType => {
   const selectedSquiresId = store.state.squires.squiresDeposited.map(squire => squire.tokenId)
   await store.dispatch('squires/finishQuest', { questType, selectedSquiresId })
   await store.dispatch('squires/startQuest', { questType, selectedSquiresId })
-  store.dispatch('squires/getSquiresQuesting', questType)
+  await store.dispatch('squires/getSquiresQuesting', questType)
   state.selectedSquiresId = []
 }
 </script>

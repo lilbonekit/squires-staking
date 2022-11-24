@@ -15,6 +15,7 @@ const itemsModule = {
     fiefToDeposit: 0,
     itemsToDeposit: [],
     itemsToWithdraw: [],
+    itemsOrdered: [],
     selectedItemsToWithdraw: [],
     fiefTotal: 0,
     squires: [],
@@ -51,6 +52,9 @@ const itemsModule = {
     },
     setItemsToWithdraw(state, payload) {
       state.itemsToWithdraw = payload
+    },
+    setItemsOrdered(state, payload) {
+      state.itemsOrdered = payload
     },
     setSelectedItemsToWithdraw(state, payload) {
       state.selectedItemsToWithdraw = payload
@@ -250,9 +254,6 @@ const itemsModule = {
       const _contractAddress = new Array(selectedItems.length).fill(contractAddressByItemType[itemType])
       const _id = selectedItems.map(item => item.id + 100)
       const _amount = selectedItems.map(item => item.amount)
-      console.log('_contractAddress:', _contractAddress)
-      console.log('_id:', _id)
-      console.log('_amount:', _amount)
 
       try {
         await koteStorageContract.methods.depositItems(_contractAddress, _id, _amount).send({ from: rootState.web3.account })
@@ -287,6 +288,7 @@ const itemsModule = {
     async requestWithdraw1155({ rootState, state, commit }, itemType) {
       try {
         commit('setLoading', true)
+        commit('setItemsOrdered', [])
         await socketService.requestWithdraw1155(
           rootState.socket.socketInstance,
           rootState.web3.library,
@@ -303,6 +305,7 @@ const itemsModule = {
     async withdrawItems({ rootState, state, commit }, items1155) {
       console.log('withdraw items:', items1155)
       console.log('selected withdraw items:', state.selectedItemsToWithdraw)
+      commit('setLoading', true)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
       const _id = items1155.map(item1155 => item1155.withdrawl.id)
       const _amount = items1155.map(item1155 => item1155.withdrawl.amount)
@@ -314,14 +317,6 @@ const itemsModule = {
         await koteStorageContract.methods
           .withdrawMany1155(_id, _amount, _contract, _nonce, _standard, signature)
           .send({ from: rootState.web3.account })
-        let itemsToWithdraw = state.itemsToWithdraw
-        items1155.forEach(item1155 => {
-          itemsToWithdraw = itemsToWithdraw.filter(item => item.id !== item1155.withdrawl.id)
-        })
-        commit(
-          'setItemsToWithdraw',
-          itemsToWithdraw.sort((a, b) => a.id - b.id),
-        )
         commit('setLoading', false)
       } catch (error) {
         console.log(error)

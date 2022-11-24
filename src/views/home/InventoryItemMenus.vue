@@ -179,20 +179,22 @@ const handleClickWithdrawItems = itemType => {
     <main id="Potion-Console" class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div class="item token" v-for="potion in potionItems" :key="potion.id">
-            <div class="token-image">
-              <div class="menu-label">{{ itemRarity[potion.level] }}</div>
-              <img :src="`/assets/images/potions/${potion.name}.png`" alt="no img" />
+          <template v-for="potion in potionItems" :key="potion.id">
+            <div class="item token" v-if="store.state.items.potions[potion.id] > 0">
+              <div class="token-image">
+                <div class="menu-label">{{ itemRarity[potion.level] }}</div>
+                <img :src="`/assets/images/potions/${potion.name}.png`" alt="no img" />
+              </div>
+              <div class="token-stats">
+                <ul>
+                  <li class="stat">
+                    Amount: <span class="stat-value">{{ store.state.items.potions[potion.id] }}</span>
+                  </li>
+                </ul>
+                <button class="btn quest">{{ potion.name }}</button>
+              </div>
             </div>
-            <div class="token-stats">
-              <ul>
-                <li class="stat">
-                  Amount: <span class="stat-value">{{ store.state.items.potions[potion.id] }}</span>
-                </li>
-              </ul>
-              <button class="btn quest" id="squires">{{ potion.name }}</button>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </main>
@@ -210,20 +212,22 @@ const handleClickWithdrawItems = itemType => {
     <main class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div class="item token" v-for="ring in ringItems" :key="ring.id">
-            <div class="token-image">
-              <div class="menu-label">{{ itemRarity[ring.level] }}</div>
-              <img :src="`/assets/images/rings/${ring.name}.png`" alt="no img" />
+          <template v-for="ring in ringItems" :key="ring.id">
+            <div class="item token" v-if="store.state.items.rings[ring.id] > 0">
+              <div class="token-image">
+                <div class="menu-label">{{ itemRarity[ring.level] }}</div>
+                <img :src="`/assets/images/rings/${ring.name}.png`" alt="no img" />
+              </div>
+              <div class="token-stats">
+                <ul>
+                  <li class="stat">
+                    Amount: <span class="stat-value">{{ store.state.items.rings[ring.id] }}</span>
+                  </li>
+                </ul>
+                <button class="btn quest">{{ ring.name }}</button>
+              </div>
             </div>
-            <div class="token-stats">
-              <ul>
-                <li class="stat">
-                  Amount: <span class="stat-value">{{ store.state.items.rings[ring.id] }}</span>
-                </li>
-              </ul>
-              <button class="btn quest">{{ ring.name }}</button>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </main>
@@ -241,20 +245,22 @@ const handleClickWithdrawItems = itemType => {
     <main id="Trinket-Console" class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div class="item token" v-for="trinket in trinketItems" :key="trinket.id">
-            <div class="token-image">
-              <div class="menu-label">{{ itemRarity[trinket.level] }}</div>
-              <img :src="`/assets/images/trinkets/${trinket.name}.png`" />
+          <template v-for="trinket in trinketItems" :key="trinket.id">
+            <div class="item token" v-if="store.state.items.trinkets[trinket.id] > 0">
+              <div class="token-image">
+                <div class="menu-label">{{ itemRarity[trinket.level] }}</div>
+                <img :src="`/assets/images/trinkets/${trinket.name}.png`" />
+              </div>
+              <div class="token-stats">
+                <ul>
+                  <li class="stat">
+                    Amount: <span class="stat-value">{{ store.state.items.trinkets[trinket.id] }}</span>
+                  </li>
+                </ul>
+                <button class="btn quest">{{ trinket.name }}</button>
+              </div>
             </div>
-            <div class="token-stats">
-              <ul>
-                <li class="stat">
-                  Amount: <span class="stat-value">{{ store.state.items.trinkets[trinket.id] }}</span>
-                </li>
-              </ul>
-              <button class="btn quest">{{ trinket.name }}</button>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </main>
