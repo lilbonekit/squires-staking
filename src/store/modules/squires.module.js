@@ -157,7 +157,7 @@ const squiresModule = {
         commit('setLoading', false)
       }
     },
-    requestWithdrawOrders({ rootState, state, commit }) {
+    requestWithdrawOrders({ rootState, commit }) {
       commit('setLoading', true)
       try {
         socketService.requestWithdrawOrders(rootState.socket.socketInstance)

@@ -16,7 +16,6 @@ const itemsModule = {
     itemsToDeposit: [],
     itemsToWithdraw: [],
     itemsOrdered: [],
-    selectedItemsToWithdraw: [],
     fiefTotal: 0,
     squires: [],
     squireTotal: 0,
@@ -55,9 +54,6 @@ const itemsModule = {
     },
     setItemsOrdered(state, payload) {
       state.itemsOrdered = payload
-    },
-    setSelectedItemsToWithdraw(state, payload) {
-      state.selectedItemsToWithdraw = payload
     },
     setFiefToDeposit(state, payload) {
       state.fiefToDeposit = payload
@@ -285,26 +281,42 @@ const itemsModule = {
         commit('setLoading', false)
       }, 500)
     },
-    async requestWithdraw1155({ rootState, state, commit }, itemType) {
+    async requestWithdraw1155({ rootState, state, commit }, { selectedItems, itemType }) {
       try {
         commit('setLoading', true)
-        commit('setItemsOrdered', [])
         await socketService.requestWithdraw1155(
           rootState.socket.socketInstance,
           rootState.web3.library,
           rootState.web3.account,
-          state.selectedItemsToWithdraw.map(item => item.id),
-          state.selectedItemsToWithdraw.map(item => item.amount),
+          selectedItems.map(item => item.id),
+          selectedItems.map(item => item.amount),
           itemType,
         )
+        let itemsToWithdraw = state.itemsToWithdraw
+        selectedItems.forEach(selectedItem => {
+          itemsToWithdraw = itemsToWithdraw.filter(item => item.id !== selectedItem.id)
+        })
+        commit(
+          'setItemsToWithdraw',
+          itemsToWithdraw.sort((a, b) => a.id - b.id),
+        )
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+        commit('setLoading', false)
+      }
+    },
+    requestWithdrawOrders({ rootState, commit }) {
+      commit('setLoading', true)
+      commit('setItemsOrdered', [])
+      try {
+        socketService.requestWithdrawOrders(rootState.socket.socketInstance)
       } catch (error) {
         console.log(error)
         commit('setLoading', false)
       }
     },
     async withdrawItems({ rootState, state, commit }, items1155) {
-      console.log('withdraw items:', items1155)
-      console.log('selected withdraw items:', state.selectedItemsToWithdraw)
       commit('setLoading', true)
       const koteStorageContract = getContract(rootState.web3.library, koteStorage.abi, koteStorage.address)
       const _id = items1155.map(item1155 => item1155.withdrawl.id)
@@ -317,6 +329,11 @@ const itemsModule = {
         await koteStorageContract.methods
           .withdrawMany1155(_id, _amount, _contract, _nonce, _standard, signature)
           .send({ from: rootState.web3.account })
+        let itemsOrdered = state.itemsOrdered
+        items1155.forEach(item1155 => {
+          itemsOrdered = itemsOrdered.filter(item => item.withdrawl.id !== item1155.withdrawl.id)
+        })
+        commit('setItemsOrdered', itemsOrdered)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)

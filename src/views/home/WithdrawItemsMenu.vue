@@ -50,19 +50,15 @@ const handleSelectItem = (id, amount) => {
 
 const handleClickRequestFew = async () => {
   state.loadingMenuDescription = `Requesting ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
-  store.commit('items/setSelectedItemsToWithdraw', state.selectedItems)
-  await store.dispatch('items/requestWithdraw1155', state.itemType)
+  await store.dispatch('items/requestWithdraw1155', { selectedItems: state.selectedItems, itemType: state.itemType })
   state.selectedItems = []
-  emit('handle-click-inventory-item', `order/items/${state.itemType}`)
 }
 
 const handleClickRequestAll = async () => {
   state.loadingMenuDescription = `Requesting ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
   const selectedItems = store.state.items.itemsToWithdraw.map(item => Object.assign({ id: item.id, amount: item.amount }))
-  store.commit('items/setSelectedItemsToWithdraw', selectedItems)
-  await store.dispatch('items/requestWithdraw1155', state.itemType)
+  await store.dispatch('items/requestWithdraw1155', { selectedItems, itemType: state.itemType })
   state.selectedItems = []
-  emit('handle-click-inventory-item', `order/items/${state.itemType}`)
 }
 </script>
 
@@ -97,6 +93,15 @@ const handleClickRequestAll = async () => {
       </button>
       <button class="btn" :class="{ quest: store.state.items.loading }" :disabled="store.state.items.loading" @click="() => handleClickRefresh()">
         Refresh
+      </button>
+      <button
+        style="position: absolute; bottom: 25px; right: 20px"
+        class="btn"
+        :class="{ quest: store.state.items.loading }"
+        :disabled="store.state.items.loading"
+        @click="() => emit('handle-click-inventory-item', `order/items/${state.itemType}`)"
+      >
+        OrderList
       </button>
     </header>
     <main class="menu-main">
