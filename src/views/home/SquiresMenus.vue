@@ -177,4 +177,13 @@ const handleClickReturnAllandRestart = async questType => {
     :squires-menu-active-status="squiresMenuActiveStatus"
     @handle-click-close-menu="() => emit('handle-click-close-menu')"
   />
+
+  <!-- Close Temple Menu -->
+  <div class="menu quest-menu" :class="{ 'menu-active': squiresMenuActiveStatus === 'temple/close' }">
+    <header class="menu-header">
+      <button class="close-menu" @click="() => emit('handle-click-close-menu')"></button>
+      <div class="menu-label" style="margin-top: -8px">Temple</div>
+      <p class="menu-description">The temple is currently closed because it's not the weekend.</p>
+    </header>
+  </div>
 </template>

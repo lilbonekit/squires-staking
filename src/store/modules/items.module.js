@@ -255,7 +255,14 @@ const itemsModule = {
         await koteStorageContract.methods.depositItems(_contractAddress, _id, _amount).send({ from: rootState.web3.account })
         let itemsToDeposit = state.itemsToDeposit
         selectedItems.forEach(item => {
-          itemsToDeposit = itemsToDeposit.filter(itemToDeposit => itemToDeposit.id !== item.id)
+          itemsToDeposit = itemsToDeposit
+            .map(itemToDeposit => {
+              if (itemToDeposit.id === item.id) {
+                itemToDeposit.amount = itemToDeposit.amount - item.amount
+              }
+              return itemToDeposit
+            })
+            .filter(itemToDeposit => itemToDeposit.amount > 0)
         })
         commit('setItemsToDeposit', itemsToDeposit)
         console.log('setItemsToDeposit:', itemsToDeposit)
@@ -265,7 +272,7 @@ const itemsModule = {
         commit('setLoading', false)
       }
     },
-    getItemsToWithdraw({ state, commit }, itemType) {
+    async getItemsToWithdraw({ state, commit }, itemType) {
       commit('setLoading', true)
       commit('setItemsToWithdraw', [])
       let itemsToWithdraw = []
@@ -294,7 +301,14 @@ const itemsModule = {
         )
         let itemsToWithdraw = state.itemsToWithdraw
         selectedItems.forEach(selectedItem => {
-          itemsToWithdraw = itemsToWithdraw.filter(item => item.id !== selectedItem.id)
+          itemsToWithdraw = itemsToWithdraw
+            .map(itemToWithdraw => {
+              if (itemToWithdraw.id === selectedItem.id) {
+                itemToWithdraw.amount = itemToWithdraw.amount - selectedItem.amount
+              }
+              return itemToWithdraw
+            })
+            .filter(itemToWithdraw => itemToWithdraw.amount > 0)
         })
         commit(
           'setItemsToWithdraw',

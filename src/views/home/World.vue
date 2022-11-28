@@ -34,6 +34,13 @@ const toggleAudio = audioToggle => {
   }
 }
 
+const handleClickTemple = () => {
+  const dayOfWeek = new Date().getDay()
+  const isWeekend = dayOfWeek === 6 || dayOfWeek === 0
+  if (!isWeekend) emit('handle-click-label', 'temple/send')
+  else emit('handle-click-label', 'temple/close')
+}
+
 onMounted(() => {
   playAudio()
 })
@@ -106,7 +113,7 @@ onUnmounted(() => {
           :class="{ quest: false }"
           @mouseenter="() => emit('handle-hover-map-region', 'temple')"
           @mouseleave="() => emit('handle-hover-map-region', '')"
-          @click="() => {}"
+          @click="handleClickTemple"
         >
           Temple
         </button>

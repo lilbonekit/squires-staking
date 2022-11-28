@@ -14,6 +14,7 @@ const state = reactive({
   itemType: '',
   loadingMenuDescription: '',
   selectedItems: [],
+  withdrawAmounts: [],
 })
 const menuActiveStatus = computed(() => props.inventoryItemMenuActiveStatus)
 const showWithdrawBtn = computed(() => (state.selectedItems.length > 0 ? true : false))
@@ -27,25 +28,36 @@ watch(menuActiveStatus, newStatus => {
   if (newStatus.slice(0, newStatus.lastIndexOf('/')) === 'withdraw/items') {
     const itemType = newStatus.split('/')[2]
     state.itemType = itemType
-    setTimeout(() => {
+    setTimeout(async () => {
       state.loadingMenuDescription = `Loading ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s to withdraw`
       state.selectedItems = []
-      store.dispatch('items/getItemsToWithdraw', itemType)
+      await store.dispatch('items/getItemsToWithdraw', itemType)
+      setTimeout(async () => {
+        state.withdrawAmounts = new Array(store.state.items.itemsToWithdraw.length).fill(1)
+      }, 500)
     }, 750)
   }
 })
 
 const isSelected = id => (state.selectedItems.filter(item => item.id === id).length > 0 ? true : false)
 
-const handleClickRefresh = () => {
+const handleClickRefresh = async () => {
   state.loadingMenuDescription = `Loading ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
   state.selectedItems = []
-  store.dispatch('items/getItemsToWithdraw', state.itemType)
+  await store.dispatch('items/getItemsToWithdraw', state.itemType)
+  setTimeout(async () => {
+    state.withdrawAmounts = new Array(store.state.items.itemsToWithdraw.length).fill(1)
+  }, 500)
 }
 
 const handleSelectItem = (id, amount) => {
   if (isSelected(id)) state.selectedItems = state.selectedItems.filter(item => item.id !== id)
   else state.selectedItems.push({ id, amount })
+}
+
+const handleInputChange = (index, totalAmount) => {
+  if (state.withdrawAmounts[index] > totalAmount) state.withdrawAmounts[index] = totalAmount
+  if (state.withdrawAmounts[index] < 1) state.withdrawAmounts[index] = 1
 }
 
 const handleClickRequestFew = async () => {
@@ -56,7 +68,7 @@ const handleClickRequestFew = async () => {
 
 const handleClickRequestAll = async () => {
   state.loadingMenuDescription = `Requesting ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to withdraw`
-  const selectedItems = store.state.items.itemsToWithdraw.map(item => Object.assign({ id: item.id, amount: item.amount }))
+  const selectedItems = store.state.items.itemsToWithdraw.map((item, index) => Object.assign({ id: item.id, amount: state.withdrawAmounts[index] }))
   await store.dispatch('items/requestWithdraw1155', { selectedItems, itemType: state.itemType })
   state.selectedItems = []
 }
@@ -107,18 +119,33 @@ const handleClickRequestAll = async () => {
     <main class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div class="item token" v-for="item in store.state.items.itemsToWithdraw" :key="item.id" :class="{ selected: isSelected(item.id) }">
+          <div
+            class="item token"
+            v-for="(item, index) in store.state.items.itemsToWithdraw"
+            :key="item.id"
+            :class="{ selected: isSelected(item.id) }"
+          >
             <div class="token-image">
               <div class="menu-label">{{ itemRarity[item.level] }}</div>
               <img :src="`/assets/images/${state.itemType}s/${item.name}.png`" alt="no img" />
             </div>
             <div class="token-stats">
-              <ul>
+              <ul style="display: flex; flex-flow: column nowrap">
                 <li class="stat">
-                  Amount: <span class="stat-value">{{ item.amount }}</span>
+                  Total Amount: <span class="stat-value">{{ item.amount }}</span>
+                </li>
+                <li class="stat" style="display: flex; align-items: center">
+                  <span>Amount to Withdraw:</span>
+                  <input
+                    class="stat-value"
+                    type="number"
+                    style="width: 40px; height: 25px"
+                    v-model="state.withdrawAmounts[index]"
+                    @change="() => handleInputChange(index, item.amount)"
+                  />
                 </li>
               </ul>
-              <button class="btn quest" @click="() => handleSelectItem(item.id, item.amount)">
+              <button class="btn quest" @click="() => handleSelectItem(item.id, state.withdrawAmounts[index])">
                 {{ isSelected(item.id) ? 'Deselect' : 'Select' }} <span class="token-number">#{{ item.id - 100 }}</span> {{ item.name }}
               </button>
             </div>

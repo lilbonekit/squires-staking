@@ -14,6 +14,7 @@ const state = reactive({
   itemType: '',
   loadingMenuDescription: '',
   selectedItems: [],
+  depositAmounts: [],
 })
 const menuActiveStatus = computed(() => props.inventoryItemMenuActiveStatus)
 const showDepositBtn = computed(() => (state.selectedItems.length > 0 ? true : false))
@@ -29,25 +30,32 @@ watch(menuActiveStatus, newStatus => {
   if (newStatus.slice(0, newStatus.lastIndexOf('/')) === 'deposit/items') {
     const itemType = newStatus.split('/')[2]
     state.itemType = itemType
-    setTimeout(() => {
+    setTimeout(async () => {
       state.loadingMenuDescription = `Loading ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s to Deposit`
       state.selectedItems = []
-      store.dispatch('items/getItemsToDeposit', itemType)
+      await store.dispatch('items/getItemsToDeposit', itemType)
+      state.depositAmounts = new Array(store.state.items.itemsToDeposit.length).fill(1)
     }, 750)
   }
 })
 
 const isSelected = id => (state.selectedItems.filter(item => item.id === id).length > 0 ? true : false)
 
-const handleClickRefresh = () => {
+const handleClickRefresh = async () => {
   state.loadingMenuDescription = `Loading ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s to Deposit`
   state.selectedItems = []
-  store.dispatch('items/getItemsToDeposit', state.itemType)
+  await store.dispatch('items/getItemsToDeposit', state.itemType)
+  state.depositAmounts = new Array(store.state.items.itemsToDeposit.length).fill(1)
 }
 
 const handleSelectItem = (id, amount) => {
   if (isSelected(id)) state.selectedItems = state.selectedItems.filter(item => item.id !== id)
   else state.selectedItems.push({ id, amount })
+}
+
+const handleInputChange = (index, totalAmount) => {
+  if (state.depositAmounts[index] > totalAmount) state.depositAmounts[index] = totalAmount
+  if (state.depositAmounts[index] < 1) state.depositAmounts[index] = 1
 }
 
 const handleClickDepositFew = async () => {
@@ -58,7 +66,7 @@ const handleClickDepositFew = async () => {
 
 const handleClickDepositAll = async () => {
   state.loadingMenuDescription = `Depositing ${state.itemType.charAt(0).toUpperCase() + state.itemType.slice(1)}s and Prompting Metamask`
-  const selectedItems = store.state.items.itemsToDeposit.map(item => Object.assign({ id: item.id, amount: item.amount }))
+  const selectedItems = store.state.items.itemsToDeposit.map((item, index) => Object.assign({ id: item.id, amount: state.depositAmounts[index] }))
   await store.dispatch('items/depositItems', { selectedItems, itemType: state.itemType })
   state.selectedItems = []
 }
@@ -100,18 +108,28 @@ const handleClickDepositAll = async () => {
     <main class="menu-main">
       <div class="content">
         <div class="menu-list scrolling-list">
-          <div class="item token" v-for="item in store.state.items.itemsToDeposit" :key="item.id" :class="{ selected: isSelected(item.id) }">
+          <div class="item token" v-for="(item, index) in store.state.items.itemsToDeposit" :key="item.id" :class="{ selected: isSelected(item.id) }">
             <div class="token-image">
               <div class="menu-label">{{ itemRarity[item.level] }}</div>
               <img :src="`/assets/images/${state.itemType}s/${item.name}.png`" alt="no img" />
             </div>
             <div class="token-stats">
-              <ul>
+              <ul style="display: flex; flex-flow: column nowrap">
                 <li class="stat">
-                  Amount: <span class="stat-value">{{ item.amount }}</span>
+                  Total Amount: <span class="stat-value">{{ item.amount }}</span>
+                </li>
+                <li class="stat" style="display: flex; align-items: center">
+                  <span>Amount to Deposit:</span>
+                  <input
+                    class="stat-value"
+                    type="number"
+                    style="width: 40px; height: 25px"
+                    v-model="state.depositAmounts[index]"
+                    @change="() => handleInputChange(index, item.amount)"
+                  />
                 </li>
               </ul>
-              <button class="btn quest" @click="() => handleSelectItem(item.id, item.amount)">
+              <button class="btn quest" @click="() => handleSelectItem(item.id, state.depositAmounts[index])">
                 {{ isSelected(item.id) ? 'Deselect' : 'Select' }} <span class="token-number">#{{ item.id }}</span> {{ item.name }}
               </button>
             </div>

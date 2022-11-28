@@ -28,7 +28,7 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
     let newItems = []
     let fiefSum = 0
     store.state.squires.loot.forEach(lootData => {
-      if (lootData.upgrades[0] !== 'None') upgradedSquires.push(store.state.items.squires.filter(squire => squire.tokenId === lootData.id)[0])
+      if (lootData.upgrades[0] !== 'None' && lootData.upgrades.length > 0) upgradedSquires.push(store.state.items.squires.filter(squire => squire.tokenId === lootData.id)[0])
       if (lootData.items.length > 0) newItems.push(store.state.items.inventoryItems.filter(item => item.id === lootData.items[0].id)[0])
       fiefSum += Number(lootData.fief)
     })
@@ -42,9 +42,10 @@ watch(menuActiveStatus, (newStatus, oldStatus) => {
 })
 
 const getUpgradedProperty = squire => {
-  let upgradedProperty = store.state.squires.loot.filter(lootData => Number(squire.tokenId) === Number(lootData.id))[0].upgrades[0]
-  upgradedProperty = upgradedProperty.charAt(0).toUpperCase() + upgradedProperty.slice(1)
-  return upgradedProperty
+  let upgradedProperty = store.state.squires.loot.filter(lootData => Number(squire.tokenId) === Number(lootData.id))[0].upgrades.map(upgrade => {
+    return upgrade.charAt(0).toUpperCase() + upgrade.slice(1)
+  })
+  return upgradedProperty.toString()
 }
 
 const handleClickCloseMenu = () => {
